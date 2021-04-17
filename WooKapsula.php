@@ -12,6 +12,9 @@ use Kapsula\Pacote;
 use Kapsula\Cliente;
 use WooKapsula\WCK_Order;
 use WooKapsula\WCK_Customer;
+use WooKapsula\WCK_Order_Item_Product;
+use WooKapsula\CustomField;
+use WooKapsula\API;
 
 Class WooKapsulaPlugin{
 	
@@ -27,15 +30,26 @@ Class WooKapsulaPlugin{
 			return ;
 		}
 
-		$cliente = new Cliente();
-		$clientes = $cliente->get()->data;
+		//$order = new WCK_Order(14);
+		//var_dump($order->get_Kapsula_pacote());
+		////$pedido = $order->Wc_to_Kapsula();
+		//die();
+
+		//$order = new WC_Order(14);
+		//var_dump($order->get_items());
+		//die();
+		//$woocli = new WCK_Customer(null);
+		//$woocli->from_Kapsula_id(2213139);		
+		//var_dump($woocli);
+		//die();
+		//$clientes = $cliente->get()->data;
 		
 		//var_dump($clientes);
 		//die();
-		foreach ($clientes as $key) {
-			$woocli = new WCK_Customer(null);
-			$woocli->populate_from_Kapsula($key);		
-		}
+		//foreach ($clientes as $key) {
+		//	$woocli = new WCK_Customer(null);
+		//	$woocli->populate_from_Kapsula($key);		
+		//}
 		
 		
 		
@@ -46,6 +60,7 @@ Class WooKapsulaPlugin{
 		//die();
 
 		$this->wkp_load_plugin_actions();
+		$this->wkp_load_plugin_filters ();
 	}
 
 	public function wkp_load_plugin_actions(){
@@ -53,6 +68,21 @@ Class WooKapsulaPlugin{
 		add_action( 'wp_enqueue_scripts', [$this, 'wkp_registrar_arquivos'] );	
 		add_action( 'admin_enqueue_scripts', [$this, 'wkp_registrar_arquivos'] );
 		add_action( 'woocommerce_order_status_changed', [$this,'wkp_register_order_status_changed'], 10, 3);
+
+		$custom_field = new CustomField();
+		add_action('woocommerce_product_options_general_product_data', [$custom_field, 'woocommerce_product_custom_fields']);
+		add_action('woocommerce_admin_process_product_object', [$custom_field, 'woocommerce_product_custom_fields_save']);		
+
+		add_action( 'woocommerce_admin_order_data_after_order_details', [$custom_field, 'send_to_kapsula_button'] );
+
+		$api = new API();
+		add_action( 'rest_api_init', [$api, 'register_routes'] );
+		    
+	}
+
+	public function wkp_load_plugin_filters (){
+
+		//$custom_field = new CustomField();
 		
 	}
 
@@ -65,13 +95,12 @@ Class WooKapsulaPlugin{
 	}
 
 	public function wkp_registrar_arquivos(){
-		wp_enqueue_script('jquery');
 		
-		wp_register_script( 'WooKapsulaJs', plugins_url('js/WooKapsula.js', __FILE__));
-		wp_enqueue_script( 'WooKapsulaJs' );
+		wp_enqueue_script( 'WooKapsulaJs', plugins_url('js/WooKapsula.js', __FILE__), array( 'jquery' ) );
 
-		wp_register_style( 'WooKapsulaCss', plugins_url('css/WooKapsula.css', __FILE__));
-		wp_enqueue_style( 'WooKapsulaCss' );
+		wp_enqueue_style('jquery');
+
+		wp_enqueue_style( 'WooKapsulaCss', plugins_url('css/WooKapsula.css', __FILE__) );
 	}
 
 }

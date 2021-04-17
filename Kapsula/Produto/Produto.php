@@ -2,22 +2,20 @@
 
 namespace Kapsula;
 
-
-Class Pacote extends Element{
+Class Produto extends Element{
 
 	public function __construct( $id = null ){
-		parent::__construct('pacotes');
-		$this->data_obj = 'produtos';
-		$this->status = 1;
+		parent::__construct('produtos');
+		$this->data_obj = 'produto';
 		if($id){
 			$this->id;
 			$this->get($id);
 		}
 	}
 
-  	public $id;
+	public $id;
   	public $nome;
   	public $status;
-  	public $produtos;
+
 
 }

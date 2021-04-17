@@ -14,6 +14,7 @@ Class Element {
 	public $request;
 	public $route;
 	public $objects;
+	public $data_obj;
 
 	public function post(){
 		$response = $this->request->post($this->to_json());
@@ -23,7 +24,7 @@ Class Element {
 	public function get( $id = null ){
 		$obj = substr($this->route, 0, -1);
 		if($id){
-			$this->objects = $this->request->get( $id )->{"$obj"};
+			$this->objects = $this->request->get( $id )->{"$this->data_obj"};
 			foreach ($this->objects as $key => $value) {
 				$this->{$key} = $value;
 			}

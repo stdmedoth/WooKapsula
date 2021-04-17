@@ -2,6 +2,7 @@
 
 namespace WooKapsula;
 use Kapsula\Cliente;
+use WP_Query;
 use WC_Customer;
 use Extra_Checkout_Fields_For_Brazil_Formatting;
 use WC_Data_Exception;
@@ -11,6 +12,16 @@ class WCK_Customer extends WC_Customer implements WCK_Integration{
 	public function __construct($arg){
 		parent::__construct($arg);
 	} 
+
+	public function from_Kapsula_id($cliente_id){
+		$usuario = get_users([
+			'meta_key' => 'id_kapsula',
+			'meta_value' => $cliente_id
+		]);
+
+		$kcliente = new Cliente($cliente_id);
+		$this->populate_from_Kapsula($kcliente);
+	}
 
 	public function Wc_to_Kapsula(){
 	
@@ -40,9 +51,10 @@ class WCK_Customer extends WC_Customer implements WCK_Integration{
 	
 	public function populate_from_Kapsula($cliente){
 		
+		global $wpdb;
 		try{
 		
-			$full_name = explode(' ', $cliente->nome);
+			$full_name = explode(' ', $cliente->nome, 2);
 			if(count($full_name) > 1){
 				$this->set_first_name($full_name[0]);
 				$this->set_last_name($full_name[1]);
@@ -59,27 +71,25 @@ class WCK_Customer extends WC_Customer implements WCK_Integration{
 			$this->get_billing_state($cliente->estado);
 			$this->get_billing_country($cliente->pais);
 			$this->get_billing_postcode($cliente->cep);
-			get_metadata('id_kapsula', )	
-			$args = array(
-			   'meta_key' => 'id_kapsula'
-			   'meta_query' => array(
-			       array(
-			           'key' => 'id_kapsula',
-			           'value' => $cliente->id,
-			           'compare' => '=',
-			       )
-			   )
-			);
-			$query = new WP_Query($args);
-
-			var_dump($query);
-			die();
+			
+			$usuario = get_users([
+				'meta_key' => 'id_kapsula',
+				'meta_value' => $cliente->id
+			]);
+			if($usuario){
+				$this->set_id($usuario[0]->ID);
+				update_user_meta($this->get_id(), 'id_kapsula', $cliente->id);
+				update_user_meta($this->get_id(), 'billing_cpf', $cliente->cpf);
+				update_user_meta($this->get_id(), 'billing_birthdate', $cliente->data_nascimento);
+				update_user_meta($this->get_id(), 'billing_sex', $cliente->sexo);
+			}else{
+				add_user_meta($this->get_id(), 'id_kapsula', $cliente->id);
+				add_user_meta($this->get_id(), 'billing_cpf', $cliente->cpf);
+				add_user_meta($this->get_id(), 'billing_birthdate', $cliente->data_nascimento);
+				add_user_meta($this->get_id(), 'billing_sex', $cliente->sexo);
+			}
+			
 			$this->save();
-
-			add_user_meta($this->get_id(), 'id_kapsula', $cliente->id);
-			add_user_meta($this->get_id(), 'billing_cpf', $cliente->cpf);
-			add_user_meta($this->get_id(), 'billing_birthdate', $cliente->data_nascimento);
-			add_user_meta($this->get_id(), 'billing_sex', $cliente->sexo);			
 		
 		}catch(WC_Data_Exception $e){
 			wkp_add_notice($e->getMessage(), 'error');
