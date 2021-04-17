@@ -70,4 +70,30 @@ Class Request {
 		$objects = json_decode($result);
 		return $objects;
 	}
+
+	public function put($id, $data){
+
+		if(!$id){
+			return null;
+		}
+		$url = $this->api_url . '/' . $id;
+		echo $data;
+		$this->headers[] = 'Content-Type:application/json';
+		
+		$curl = curl_init();
+
+		curl_setopt($curl, CURLOPT_URL, $this->api_url);
+		curl_setopt($curl, CURLOPT_CUSTOMREQUEST,  'PUT');
+		curl_setopt($curl, CURLOPT_POST,           true);
+		curl_setopt($curl, CURLOPT_FAILONERROR, FALSE);
+		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, FALSE);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+		curl_setopt($curl, CURLOPT_HTTPHEADER, $this->headers);
+		curl_setopt($curl, CURLOPT_POSTFIELDS, $data );
+		$result = curl_exec($curl);
+		curl_close($curl);
+		
+		return $result;
+
+	}
 }

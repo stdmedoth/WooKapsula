@@ -9,7 +9,9 @@
 require('functions.php');
 use Kapsula\Pedido;
 use Kapsula\Pacote;
+use Kapsula\Cliente;
 use WooKapsula\WCK_Order;
+use WooKapsula\WCK_Customer;
 
 Class WooKapsulaPlugin{
 	
@@ -25,12 +27,24 @@ Class WooKapsulaPlugin{
 			return ;
 		}
 
-		$obj = new WCK_Order(15);
-		$pedido = $obj->Wc_to_Kapsula();
-		if($pedido){
-			echo json_encode($pedido->get(4058975)) ;
-			die();
+		$cliente = new Cliente();
+		$clientes = $cliente->get()->data;
+		
+		//var_dump($clientes);
+		//die();
+		foreach ($clientes as $key) {
+			$woocli = new WCK_Customer(null);
+			$woocli->populate_from_Kapsula($key);		
 		}
+		
+		
+		
+		//var_dump($woocli);
+		//$obj = new WCK_Order(null);
+		//$obj->populate_from_Kapsula($pedido);
+		//var_dump($pedido);
+		//die();
+
 		$this->wkp_load_plugin_actions();
 	}
 

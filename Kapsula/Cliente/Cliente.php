@@ -13,7 +13,7 @@ Class Cliente extends Element{
         
     }
     
-    private $id;
+    public $id;
     public $cpf;
     public $nome;
     public $data_nascimento;

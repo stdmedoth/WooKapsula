@@ -2,6 +2,7 @@
 
 namespace WooKapsula;
 use Kapsula\Pedido;
+use Kapsula\Pacote;
 use WC_Order;
 
 class WCK_Order extends WC_Order implements WCK_Integration{
@@ -52,13 +53,15 @@ class WCK_Order extends WC_Order implements WCK_Integration{
 	}
 
 	/*returns WC_Order*/
-	public function populate_from_Kapsula(Pedido $pedido){
+	public function populate_from_Kapsula($pedido){
 		
 		$this->customer_id = $pedido->cliente_id;
 		
-		$pacote = new Pacote($pedido->pacote_id);
-		$this->items = $pacote->to_items();
-		
+		//$pacote = new Pacote($pedido->pacote_id);
+		//$order = new WC_Order(15);
+		//$this->items = $pacote->to_items();
+		//var_dump($order->get_items());
+		//die();
 	}
 }
 

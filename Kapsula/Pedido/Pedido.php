@@ -13,8 +13,8 @@ Class Pedido extends Element{
         }
 	}
 
-	private $id;
- 	public $cliente;
+	public $id;
+ 	public $cliente_id;
  	public $pacote_id;
  	public $tipo_frete;
  	public $valor_venda; // Opcional: em centavos se informado (ex 372.00 * 100 = 37200)
@@ -26,8 +26,5 @@ Class Pedido extends Element{
 	public $link_pdf; //link_do_pdf",
 	public $link_xml; //link_do_xml" // Opcional
 
-	public function get_id(){
-		return $this->id;	
-	}
 }
 
