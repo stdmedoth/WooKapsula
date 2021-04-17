@@ -1,16 +1,19 @@
 <?php 
 
-namespace WooKapsula;
-
-use WooKapsula\Cliente;
+namespace Kapsula;
+use Kapsula\Cliente;
 
 Class Pedido extends Element{
 
-  public function __construct(){
-  	parent::__construct('pedidos');
-  	//$this->cliente = new Cliente();
-  }
+	public function __construct($id = null){	
+		parent::__construct('pedidos');
+		if($id){
+            $this->id = $id;
+            $this->get($this->id);
+        }
+	}
 
+	private $id;
  	public $cliente;
  	public $pacote_id;
  	public $tipo_frete;
@@ -23,5 +26,8 @@ Class Pedido extends Element{
 	public $link_pdf; //link_do_pdf",
 	public $link_xml; //link_do_xml" // Opcional
 
+	public function get_id(){
+		return $this->id;	
+	}
 }
 

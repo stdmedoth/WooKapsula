@@ -1,14 +1,19 @@
 <?php
 
-namespace WooKapsula;
+namespace Kapsula;
 
 Class Cliente extends Element{
 
-    public function __construct(){
-        parent::__construct('cliente');    
+    public function __construct($id = null){
+        parent::__construct('clientes');    
+        if($id){
+            $this->id = $id;
+            $this->get($this->id);
+        }
         
     }
     
+    private $id;
     public $cpf;
     public $nome;
     public $data_nascimento;

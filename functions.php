@@ -1,7 +1,7 @@
 <?php
 
 function wordpress_inativo(){
-	wkp_add_notice('O WooKapsula depende do WooCommerce para funcionar', 'error');	
+	wkp_add_notice('O plúgin WooKapsula depende do WooCommerce para funcionar', 'error');	
 }
 
 function wkp_add_notice($text, $status){
@@ -9,5 +9,7 @@ function wkp_add_notice($text, $status){
          <p>$text</p>
     </div>";
  }
+
+
 
  ?>
