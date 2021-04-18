@@ -21,6 +21,15 @@ class CustomField{
 	    echo '</div>';
 	}
 
+	public function loading_modal(){
+		?>
+			<div id="KapsulaModal" class="modal">
+			  <p id="KapsulaMessages"></p>
+			  <a href="#" rel="modal:close">Close</a>
+			</div>
+		<?php
+	}
+
 	// Save admin product custom setting field(s) values
 	public function woocommerce_product_custom_fields_save( $product ) {
 	    if ( isset($_POST['kapsula_package']) ) {
@@ -28,17 +37,11 @@ class CustomField{
 	    }
 	}	
 
-	function add_custom_meta_box() {  
-    	add_meta_box(  
-	        'custom_meta_box', // $id  
-	        'Custom Meta Box', // $title   
-	        'show_custom_meta_box', // $callback  
-	        'post', // $page  
-	        'normal', // $context  
-	        'high'); // $priority  
-	}  
-
 	function send_to_kapsula_button( $order ){  
+		
+		$template = new Templates();
+		$template->popup_modal();
+
 		?>
 		    <div class="order_data_column">
 		        <h4><?php _e( 'Kapsula' ); ?></h4>

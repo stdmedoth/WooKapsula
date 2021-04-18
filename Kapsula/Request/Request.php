@@ -77,7 +77,6 @@ Class Request {
 			return null;
 		}
 		$url = $this->api_url . '/' . $id;
-		echo $data;
 		$this->headers[] = 'Content-Type:application/json';
 		
 		$curl = curl_init();

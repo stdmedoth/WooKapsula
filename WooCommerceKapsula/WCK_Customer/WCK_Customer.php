@@ -3,6 +3,7 @@
 namespace WooKapsula;
 use Kapsula\Cliente;
 use WP_Query;
+use WP_Error;
 use WC_Customer;
 use Extra_Checkout_Fields_For_Brazil_Formatting;
 use WC_Data_Exception;
@@ -92,7 +93,8 @@ class WCK_Customer extends WC_Customer implements WCK_Integration{
 			$this->save();
 		
 		}catch(WC_Data_Exception $e){
-			wkp_add_notice($e->getMessage(), 'error');
+			global $wookapsula_errors;
+			$wookapsula_errors->add(  'message', $e->getMessage() );
 		}
 
 		return $cliente;

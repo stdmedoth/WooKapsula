@@ -4,7 +4,6 @@ namespace WooKapsula;
 use Kapsula\Pedido;
 use Kapsula\Pacote;
 use WooKapsula\WC_Order_Item_Product;
-
 use WC_Order;
 
 class WCK_Order extends WC_Order implements WCK_Integration{
@@ -15,16 +14,17 @@ class WCK_Order extends WC_Order implements WCK_Integration{
 
 	/*returns Kapsula\Pedido*/
 	public function Wc_to_Kapsula(){
-	
+		
+		global $wookapsula_errors;
+
 		$pedido = new Pedido();
 		
 		$customer_id = $this->get_customer_id();
 		$pedido->cliente_id = get_user_meta($customer_id, 'id_kapsula')[0];
-
 		if(!$pedido->cliente_id){
-			
+				
 			if(!$customer_id){
-				wkp_add_notice('Cliente do pedido não possui login', 'error');	
+				$wookapsula_errors->add(  'message', 'Cliente do pedido não possui login' );
 				return NULL;
 			}
 
@@ -39,20 +39,32 @@ class WCK_Order extends WC_Order implements WCK_Integration{
 			
 			if( $return->code == 200 ){
 				add_user_meta($customer_id,  'id_kapsula', $return->cliente);
-			}else{
-				
-				wkp_add_notice('Erro ao integrar cliente do pedido', 'error');	
+			}else{	
+				$wookapsula_errors->add(  'message', 'Erro ao integrar cliente do pedido' );
+				return NULL;
 			}
 			
 		}
 
 		$pacote = $this->get_Kapsula_pacote();
 		$pedido->pacote_id = $pacote->id;
+		if(!$pacote->id){
+			$wookapsula_errors->add(  'message', 'O pacote não foi inserido' );
+		}
 		$pedido->tipo_frete = 0;
 		$pedido->valor_venda = 0;
 		$pedido->valor = 0;
 
 		return $pedido;
+	}
+
+
+	public function set_enviado($flag){
+		update_post_meta($this->ID,'_kapsula_sended', $flag);
+	}
+
+	public function get_enviado(){
+		return  get_post_meta($this->ID, '_kapsula_sended');
 	}
 
 	public function get_Kapsula_pacote(){
@@ -67,6 +79,7 @@ class WCK_Order extends WC_Order implements WCK_Integration{
 			$product = new WCK_Product($item->get_product_id());
 			$pacote->nome .= $product->get_name();
 			$pacote->id = $product->get_meta('kapsula_package');
+			
 			$items[] = $product->Wc_to_Kapsula();
 		}
 		$pacote->produtos = $items;

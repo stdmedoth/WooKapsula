@@ -15,6 +15,9 @@ use WooKapsula\WCK_Customer;
 use WooKapsula\WCK_Order_Item_Product;
 use WooKapsula\CustomField;
 use WooKapsula\API;
+use WP_Error;
+global $wookapsula_errors;
+$wookapsula_errors = new WP_Error();
 
 Class WooKapsulaPlugin{
 	
@@ -58,7 +61,6 @@ Class WooKapsulaPlugin{
 		//$obj->populate_from_Kapsula($pedido);
 		//var_dump($pedido);
 		//die();
-
 		$this->wkp_load_plugin_actions();
 		$this->wkp_load_plugin_filters ();
 	}
@@ -70,13 +72,13 @@ Class WooKapsulaPlugin{
 		add_action( 'woocommerce_order_status_changed', [$this,'wkp_register_order_status_changed'], 10, 3);
 
 		$custom_field = new CustomField();
-		add_action('woocommerce_product_options_general_product_data', [$custom_field, 'woocommerce_product_custom_fields']);
-		add_action('woocommerce_admin_process_product_object', [$custom_field, 'woocommerce_product_custom_fields_save']);		
-
-		add_action( 'woocommerce_admin_order_data_after_order_details', [$custom_field, 'send_to_kapsula_button'] );
+		add_action( 'woocommerce_product_options_general_product_data', [$custom_field, 'woocommerce_product_custom_fields']);
+		add_action( 'woocommerce_admin_process_product_object', [$custom_field, 'woocommerce_product_custom_fields_save']);		
+		add_action( 'woocommerce_admin_order_data_after_billing_address', [$custom_field, 'send_to_kapsula_button'] );
+		add_action( 'woocommerce_admin_order_data_after_billing_address', [$custom_field , 'loading_modal'] );
 
 		$api = new API();
-		add_action( 'rest_api_init', [$api, 'register_routes'] );
+		add_action( 'rest_api_init', [$api, 'init'] );
 		    
 	}
 
@@ -96,11 +98,17 @@ Class WooKapsulaPlugin{
 
 	public function wkp_registrar_arquivos(){
 		
-		wp_enqueue_script( 'WooKapsulaJs', plugins_url('js/WooKapsula.js', __FILE__), array( 'jquery' ) );
+		wp_enqueue_style( 'modal-loading-css', plugins_url('assets/loading-modal/css/modal-loading.css', __FILE__) );
+		wp_enqueue_style( 'modal-loading-animate-css', plugins_url('assets/loading-modal/css/modal-loading-animate.css', __FILE__) );
+		wp_enqueue_style( 'bootstrap-5-css', plugins_url('assets/bootstrap-5/css/bootstrap.min.css', __FILE__) );
+		wp_enqueue_style( 'WooKapsulaCss', plugins_url('assets/css/WooKapsula.css', __FILE__) );
 
-		wp_enqueue_style('jquery');
+		wp_enqueue_script( 'modal-loading-js', plugins_url('assets/loading-modal/js/modal-loading.js', __FILE__), array( 'jquery' ) );
+		wp_enqueue_script( 'bootstrap-5-js', plugins_url('assets/bootstrap-5/js/bootstrap.min.js', __FILE__), array( 'jquery' ) );
+		wp_enqueue_script( 'notify-js', plugins_url('assets/js/notify.min.js', __FILE__), array( 'jquery' ) );
 
-		wp_enqueue_style( 'WooKapsulaCss', plugins_url('css/WooKapsula.css', __FILE__) );
+		wp_enqueue_script( 'WooKapsulaJs', plugins_url('assets/js/WooKapsula.js', __FILE__), array( 'jquery' ) );
+
 	}
 
 }
