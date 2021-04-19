@@ -14,8 +14,10 @@ use WooKapsula\WCK_Order;
 use WooKapsula\WCK_Customer;
 use WooKapsula\WCK_Order_Item_Product;
 use WooKapsula\CustomField;
+use WooKapsula\Helpers;
 use WooKapsula\API;
-use WP_Error;
+
+//use WP_Error;
 global $wookapsula_errors;
 $wookapsula_errors = new WP_Error();
 
@@ -67,7 +69,7 @@ Class WooKapsulaPlugin{
 
 	public function wkp_load_plugin_actions(){
 
-		add_action( 'wp_enqueue_scripts', [$this, 'wkp_registrar_arquivos'] );	
+		//add_action( 'wp_enqueue_scripts', [$this, 'wkp_registrar_arquivos'] );	
 		add_action( 'admin_enqueue_scripts', [$this, 'wkp_registrar_arquivos'] );
 		add_action( 'woocommerce_order_status_changed', [$this,'wkp_register_order_status_changed'], 10, 3);
 
@@ -79,7 +81,8 @@ Class WooKapsulaPlugin{
 
 		$api = new API();
 		add_action( 'rest_api_init', [$api, 'init'] );
-		    
+		  
+		
 	}
 
 	public function wkp_load_plugin_filters (){
@@ -89,10 +92,25 @@ Class WooKapsulaPlugin{
 	}
 
 	public function wkp_register_order_status_changed( $this_get_id, $this_status_transition_from, $this_status_transition_to  ){
-		//var_dump($this_get_id);
-		$order = new WCK_Order( $this_get_id );
+		
+		if($this_status_transition_from != 'completed' && $this_status_transition_to == 'completed'){
+			
+			$helper = new Helpers();
+		  	$status = $helper->send_order_to_kapsula($this_get_id);
+		  	if(!$status){
+			  	$errors = $helper->get_errors();
+				if(count($errors)){
+					$order = new WC_Order($this_get_id);
 
-		$pedido = new Pedido();
+					foreach ($errors as $key => $error ) {
+						$order->add_order_note($error['message']);
+					}
+				}	  		
+		  	}else{
+		  		$order->add_order_note('Enviado para Kapsula!');
+		  	}
+		  	
+		}
 
 	}
 

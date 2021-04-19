@@ -20,7 +20,11 @@ class WCK_Order extends WC_Order implements WCK_Integration{
 		$pedido = new Pedido();
 		
 		$customer_id = $this->get_customer_id();
-		$pedido->cliente_id = get_user_meta($customer_id, 'id_kapsula')[0];
+		$cliente_id_meta = get_user_meta($customer_id, 'id_kapsula');
+		if($cliente_id_meta){
+			$pedido->cliente_id = $cliente_id_meta[0];	
+		}
+		
 		if(!$pedido->cliente_id){
 				
 			if(!$customer_id){
@@ -36,11 +40,22 @@ class WCK_Order extends WC_Order implements WCK_Integration{
 			//die();
 
 			$return = $ClienteKapsula->post();
-			
+			if(!$return){
+				$wookapsula_errors->add(  'message', 'Erro ao integrar cliente do pedido' );
+				return NULL;				
+			}
 			if( $return->code == 200 ){
 				add_user_meta($customer_id,  'id_kapsula', $return->cliente);
 			}else{	
-				$wookapsula_errors->add(  'message', 'Erro ao integrar cliente do pedido' );
+				if(isset($return->erros)){
+					foreach ($return->erros as $key => $value) {
+						foreach ($value as $key2 => $erro) {
+							$wookapsula_errors->add(  'message',  $key . ' : ' . $erro );	
+						}
+					}
+				}else{
+					$wookapsula_errors->add(  'message',  $return->message );	
+				}
 				return NULL;
 			}
 			
@@ -60,11 +75,11 @@ class WCK_Order extends WC_Order implements WCK_Integration{
 
 
 	public function set_enviado($flag){
-		update_post_meta($this->ID,'_kapsula_sended', $flag);
+		update_post_meta($this->get_id(),'_kapsula_sended', $flag);
 	}
 
 	public function get_enviado(){
-		return  get_post_meta($this->ID, '_kapsula_sended');
+		return  get_post_meta($this->get_id(), '_kapsula_sended');
 	}
 
 	public function get_Kapsula_pacote(){
