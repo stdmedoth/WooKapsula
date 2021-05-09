@@ -64,7 +64,7 @@ class API{
 		}
 		return $errors;
 	}
-
+	
 	public function send_pedido( $request ){
 		global $wookapsula_errors;
 

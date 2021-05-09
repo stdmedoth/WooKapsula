@@ -3,6 +3,7 @@
 	Plugin Name: WooKapsula
 	Description: Integração KapSula com WooCommerce
 	Author: Incipe Desenvolvimento
+	Author URI: http://incipe.com.br/
 	Version: 0.1
 */
 
@@ -14,8 +15,11 @@ use WooKapsula\WCK_Order;
 use WooKapsula\WCK_Customer;
 use WooKapsula\WCK_Order_Item_Product;
 use WooKapsula\CustomField;
+use WooKapsula\Templates;
 use WooKapsula\Helpers;
 use WooKapsula\API;
+
+define('__KAPSULA_TOKEN__', get_option('wookapsula_token'));
 
 //use WP_Error;
 global $wookapsula_errors;
@@ -35,34 +39,8 @@ Class WooKapsulaPlugin{
 			return ;
 		}
 
-		//$order = new WCK_Order(14);
-		//var_dump($order->get_Kapsula_pacote());
-		////$pedido = $order->Wc_to_Kapsula();
-		//die();
-
-		//$order = new WC_Order(14);
-		//var_dump($order->get_items());
-		//die();
-		//$woocli = new WCK_Customer(null);
-		//$woocli->from_Kapsula_id(2213139);		
-		//var_dump($woocli);
-		//die();
-		//$clientes = $cliente->get()->data;
-		
-		//var_dump($clientes);
-		//die();
-		//foreach ($clientes as $key) {
-		//	$woocli = new WCK_Customer(null);
-		//	$woocli->populate_from_Kapsula($key);		
-		//}
-		
-		
-		
-		//var_dump($woocli);
-		//$obj = new WCK_Order(null);
-		//$obj->populate_from_Kapsula($pedido);
-		//var_dump($pedido);
-		//die();
+		$GLOBALS['KAPSULA_TOKEN'] = get_option('wookapsula_token');
+		add_action('admin_menu',[$this, 'load_menus']);
 		$this->wkp_load_plugin_actions();
 		$this->wkp_load_plugin_filters ();
 	}
@@ -85,6 +63,19 @@ Class WooKapsulaPlugin{
 		
 	}
 
+	public function load_menus(){
+		$template = new Templates();
+
+		add_submenu_page(
+			'woocommerce', 
+			'Kapsula', 
+			'Kapsula', 
+			'edit_posts', 
+			'wookapsula', 
+			[$template, 'wookapsula_page_display']);
+
+	}
+
 	public function wkp_load_plugin_filters (){
 
 		//$custom_field = new CustomField();
@@ -101,12 +92,12 @@ Class WooKapsulaPlugin{
 			  	$errors = $helper->get_errors();
 				if(count($errors)){
 					$order = new WC_Order($this_get_id);
-
 					foreach ($errors as $key => $error ) {
 						$order->add_order_note($error['message']);
 					}
 				}	  		
 		  	}else{
+		  		$order = new WC_Order($this_get_id);
 		  		$order->add_order_note('Enviado para Kapsula!');
 		  	}
 		  	

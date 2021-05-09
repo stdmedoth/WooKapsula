@@ -4,6 +4,34 @@ namespace WooKapsula;
 
 class Templates {
 
+  public function wookapsula_page_display(){
+    ?>
+    <div class='wrap'>
+      <h1 class='wp-heading-inline'>Kapsula</h1>
+      <hr class='wp-head-end'>
+        <?php
+          if(isset($_POST['wookapsula_token'])){
+            $wookapsula_token = $_POST['wookapsula_token'];
+            $option = get_option('wookapsula_token');
+            if(!$option){
+              add_option('wookapsula_token', $wookapsula_token);
+            }else{
+              update_option('wookapsula_token', $wookapsula_token);
+            }
+          }
+
+        ?>
+        <form class="form-control" action='?page=wookapsula' method='post'>
+          <div class="form-group">
+            <textarea class="form-control" name="wookapsula_token"><?=get_option('wookapsula_token')?></textarea>    
+          </div>
+          <button type="submit" class="btn btn-primary">Atualizar token</button>
+        </form>
+    </div>
+
+    <?php  
+  }
+
   public function popup_modal($id='kapsula_popup_modal', $title='Popup', $message=''){
     ?>
     <div id="<?=$id?>" class="modal" tabindex="-1" role="dialog">
