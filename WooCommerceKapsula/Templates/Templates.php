@@ -1,6 +1,7 @@
 <?php
 
 namespace WooKapsula;
+use WooKapsula\Cliente_List_Table;
 
 class Templates {
 
@@ -27,6 +28,20 @@ class Templates {
           </div>
           <button type="submit" class="btn btn-primary">Atualizar token</button>
         </form>
+
+        <h1 class='wp-heading-inline'>Clientes</h1>
+        <?php
+          $clientes_table = new Cliente_List_Table();
+          $clientes_table->prepare_items();
+          $clientes_table->display();
+        ?>
+
+        <h1 class='wp-heading-inline'>Produtos</h1>
+        <?php
+          $clientes_table = new Produto_List_Table();
+          $clientes_table->prepare_items();
+          $clientes_table->display();
+        ?>
     </div>
 
     <?php  

@@ -57,9 +57,10 @@ Class WooKapsulaPlugin{
 		add_action( 'woocommerce_admin_order_data_after_billing_address', [$custom_field, 'send_to_kapsula_button'] );
 		add_action( 'woocommerce_admin_order_data_after_billing_address', [$custom_field , 'loading_modal'] );
 
+		add_filter( 'woocommerce_customer_meta_fields', [ $custom_field, 'customer_meta_fields' ] );
+
 		$api = new API();
 		add_action( 'rest_api_init', [$api, 'init'] );
-		  
 		
 	}
 

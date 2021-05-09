@@ -37,6 +37,25 @@ class CustomField{
 	    }
 	}	
 
+
+public function customer_meta_fields( $fields ) {
+		// Get plugin settings.
+		$settings    = get_option( 'wcbcf_settings' );
+		$person_type = intval( $settings['person_type'] );
+
+		// Billing fields.
+		$new_fields['billing']['title'] = 'Id Kapsula';
+		$new_fields['billing']['fields']['id_kapsula'] = array(
+				'label'       => 'Id Kapsula',
+				'description' => 'Id do cliente na plataforma Kapsula');
+
+		$new_fields = apply_filters( 'wcbcf_customer_meta_fields', $new_fields );
+
+		return $new_fields;
+	}
+
+
+
 	function send_to_kapsula_button( $order ){  
 		
 		$template = new Templates();
