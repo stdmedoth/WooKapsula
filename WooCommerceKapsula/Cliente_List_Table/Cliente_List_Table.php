@@ -6,6 +6,8 @@ use WP_List_Table;
 Class Cliente_List_Table extends WP_List_Table{
 	
 	public function prepare_items(){
+
+		$this->process_bulk_action();
 		$columns = $this->get_columns();
     	$hidden = $this->get_hidden_columns();
     	$sortable = $this->get_sortable_columns();
@@ -27,6 +29,7 @@ Class Cliente_List_Table extends WP_List_Table{
 
 	public function get_columns(){
 		return array(
+			'cb' => '<input type="checkbox" />',
 			'user_id' => 'ID. Usuário',
 			'first_name' => 'Nome Usuário',
 			'id_kapsula' => 'Código Kapsula'
@@ -47,8 +50,12 @@ Class Cliente_List_Table extends WP_List_Table{
 	}
 
 	public function column_default( $item, $column_name ){
+		$actions = array(
+        	'delete' => sprintf("<a href='?page=wookapsula&post=customer&action=delete&id=%s'>%s</a> ", $item['user_id'], __('Delete')),
+      	);
 		switch($column_name){
 			case 'user_id':
+				//return sprintf('%s %s', $item[ $column_name ], $this->row_actions($actions));
 			case 'first_name':
 			case 'id_kapsula':
 				return $item[ $column_name ];
@@ -58,6 +65,33 @@ Class Cliente_List_Table extends WP_List_Table{
 		}
 	}
 
+	function get_bulk_actions(){
+    	$actions = array();
+	    $actions['delete'] = __( 'Delete' );
+
+    	return $actions;
+	}
+
+	function process_bulk_action() {
+	    global $wpdb;
+	    //Detect when a bulk action is being triggered...
+	    if( 'delete' === $this->current_action() ) {
+	      	foreach ($_POST as $key => $value) {
+	        	if($key === 'user_id'){
+	          		foreach ($value as $key2 => $value2) {
+	            		delete_user_meta($value[0], 'id_kapsula');
+	        		}
+	    		}
+	    	}
+	    }
+	}
+
+	function column_cb($item){
+        return sprintf(
+            '<input type="checkbox" name="user_id[]" value="%s" />', $item['user_id']
+        );
+    }
+
 	private function table_data(){
 		global $wpdb;
 
@@ -66,6 +100,9 @@ Class Cliente_List_Table extends WP_List_Table{
 		$clientes_id = array_map(function($n){
 			return $n['user_id'];
 		}, $data);
+
+		if(!$clientes_id || !count($clientes_id))
+			return [];
 
 		$clientes_nomes = $wpdb->get_results("SELECT user_id,  meta_value FROM ".$wpdb->prefix."usermeta WHERE meta_key = 'first_name' and user_id IN (" . implode($clientes_id, ',') . ")", ARRAY_A);
 

@@ -29,19 +29,23 @@ class Templates {
           <button type="submit" class="btn btn-primary">Atualizar token</button>
         </form>
 
-        <h1 class='wp-heading-inline'>Clientes</h1>
-        <?php
-          $clientes_table = new Cliente_List_Table();
-          $clientes_table->prepare_items();
-          $clientes_table->display();
-        ?>
+        <form class="form-control" action='?page=wookapsula' method='post'>
+          <h1 class='wp-heading-inline'>Clientes</h1>
+          <?php
+            $clientes_table = new Cliente_List_Table();
+            $clientes_table->prepare_items();
+            $clientes_table->display();
+          ?>
+        </form>
 
-        <h1 class='wp-heading-inline'>Produtos</h1>
-        <?php
-          $clientes_table = new Produto_List_Table();
-          $clientes_table->prepare_items();
-          $clientes_table->display();
-        ?>
+        <form class="form-control" action='?page=wookapsula' method='post'>
+          <h1 class='wp-heading-inline'>Produtos</h1>
+          <?php
+            $clientes_table = new Produto_List_Table();
+            $clientes_table->prepare_items();
+            $clientes_table->display();
+          ?>
+        </form>
     </div>
 
     <?php  
