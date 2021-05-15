@@ -76,19 +76,22 @@ Class Request {
 		if(!$id){
 			return null;
 		}
+		$data_json = json_encode($data);
 		$url = $this->api_url . '/' . $id;
 		$this->headers[] = 'Content-Type:application/json';
-		
+		$this->headers[] = 'Content-Length: ' . strlen($data_json);
 		$curl = curl_init();
-
-		curl_setopt($curl, CURLOPT_URL, $this->api_url);
-		curl_setopt($curl, CURLOPT_CUSTOMREQUEST,  'PUT');
-		curl_setopt($curl, CURLOPT_POST,           true);
+		curl_setopt($curl, CURLOPT_URL, $url);
+		//curl_setopt($curl, CURLOPT_PUT, TRUE);
+		//curl_setopt($curl, CURLOPT_POSTFIELDS, $data );
+		
+		curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'PUT');
 		curl_setopt($curl, CURLOPT_FAILONERROR, FALSE);
 		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, FALSE);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
 		curl_setopt($curl, CURLOPT_HTTPHEADER, $this->headers);
-		curl_setopt($curl, CURLOPT_POSTFIELDS, $data );
+		curl_setopt($curl, CURLOPT_POSTFIELDS, $data_json);
+		
 		$result = curl_exec($curl);
 		curl_close($curl);
 		

@@ -63,7 +63,7 @@ Class Helpers {
 				
 		}
 		
-		$order->set_enviado(1);
+		$order->set_enviado(1, $response->pedido);
 		return 1;
 	}
 }

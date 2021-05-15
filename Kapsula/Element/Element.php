@@ -35,11 +35,13 @@ Class Element {
 	}
 
 	public function put( $data ){
+		
 		if( !$data ){
 			return null;
 		}
-		$payload = json_encode($data);
-		return $this->request->put($this->id, $payload);			
+		//$payload = json_encode($data);
+		return json_decode($this->request->put($this->id, $data));			
+	
 	}
 
 

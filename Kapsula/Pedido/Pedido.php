@@ -7,7 +7,7 @@ Class Pedido extends Element{
 
 	public function __construct($id = null){	
 		parent::__construct('pedidos');
-		$this->data_obj = 'pedido';
+		$this->data_obj = 'pedidos';
 		if($id){
             $this->id = $id;
             $this->get($this->id);

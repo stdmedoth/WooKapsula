@@ -30,6 +30,15 @@ class Templates {
         </form>
 
         <form class="form-control" action='?page=wookapsula' method='post'>
+          <h1 class='wp-heading-inline'>Pedidos</h1>
+          <?php
+            $orders_table = new Order_List_Table();
+            $orders_table->prepare_items();
+            $orders_table->display();
+          ?>
+        </form>
+
+        <form class="form-control" action='?page=wookapsula' method='post'>
           <h1 class='wp-heading-inline'>Clientes</h1>
           <?php
             $clientes_table = new Cliente_List_Table();

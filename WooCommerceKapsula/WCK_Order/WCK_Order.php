@@ -25,8 +25,7 @@ class WCK_Order extends WC_Order implements WCK_Integration{
 			$pedido->cliente_id = $cliente_id_meta[0];	
 		}
 		
-		if(!$pedido->cliente_id){
-				
+		if(!$pedido->cliente_id){	
 			if(!$customer_id){
 				$wookapsula_errors->add(  'message', 'Cliente do pedido não possui login' );
 				return NULL;
@@ -46,6 +45,7 @@ class WCK_Order extends WC_Order implements WCK_Integration{
 			}
 			if( $return->code == 200 ){
 				add_user_meta($customer_id,  'id_kapsula', $return->cliente);
+				$pedido->cliente_id = $customer_id;
 			}else{	
 				if(isset($return->erros)){
 					foreach ($return->erros as $key => $value) {
@@ -58,7 +58,6 @@ class WCK_Order extends WC_Order implements WCK_Integration{
 				}
 				return NULL;
 			}
-			
 		}
 
 		$pacote = $this->get_Kapsula_pacote();
@@ -74,8 +73,9 @@ class WCK_Order extends WC_Order implements WCK_Integration{
 	}
 
 
-	public function set_enviado($flag){
+	public function set_enviado($flag, $id_kapsula){
 		update_post_meta($this->get_id(),'_kapsula_sended', $flag);
+		update_post_meta($this->get_id(),'_kapsula_id', $id_kapsula);
 	}
 
 	public function get_enviado(){

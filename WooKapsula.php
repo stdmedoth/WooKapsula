@@ -54,7 +54,7 @@ Class WooKapsulaPlugin{
 		$custom_field = new CustomField();
 		add_action( 'woocommerce_product_options_general_product_data', [$custom_field, 'woocommerce_product_custom_fields']);
 		add_action( 'woocommerce_admin_process_product_object', [$custom_field, 'woocommerce_product_custom_fields_save']);		
-		add_action( 'woocommerce_admin_order_data_after_billing_address', [$custom_field, 'send_to_kapsula_button'] );
+		add_action( 'woocommerce_admin_order_data_after_order_details', [$custom_field, 'wookapsula_order_container'] );
 		add_action( 'woocommerce_admin_order_data_after_billing_address', [$custom_field , 'loading_modal'] );
 
 		add_filter( 'woocommerce_customer_meta_fields', [ $custom_field, 'customer_meta_fields' ] );
@@ -124,4 +124,3 @@ Class WooKapsulaPlugin{
 }
 
 $woo_kapsula_plugin = new WooKapsulaPlugin();
-
