@@ -80,7 +80,7 @@ class WCK_Order extends WC_Order implements WCK_Integration{
 				return NULL;
 		}
 		
-		$pedido->valor_venda = $this->get_total()*100;
+		$pedido->valor_venda = $this->get_subtotal()*100;
 		$pedido->valor = 0;
 
 		return $pedido;
