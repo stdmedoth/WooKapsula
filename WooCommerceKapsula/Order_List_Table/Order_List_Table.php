@@ -63,6 +63,7 @@ Class Order_List_Table extends WP_List_Table{
 	        	if($key === 'order_id'){
 	          		foreach ($value as $key2 => $value2) {
 	            		delete_post_meta($value[0], '_kapsula_id');
+	            		delete_post_meta($value[0], '_kapsula_sended');
 	        		}
 	    		}
 	    	}

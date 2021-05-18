@@ -39,6 +39,9 @@ Class WooKapsulaPlugin{
 			return ;
 		}
 
+		//$order = new WCK_Order(11);
+		//var_dump( @array_shift($order->get_items( 'shipping' ))['method_id']  );
+		//die();
 		$GLOBALS['KAPSULA_TOKEN'] = get_option('wookapsula_token');
 		add_action('admin_menu',[$this, 'load_menus']);
 		$this->wkp_load_plugin_actions();

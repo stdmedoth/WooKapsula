@@ -65,8 +65,22 @@ class WCK_Order extends WC_Order implements WCK_Integration{
 		if(!$pacote->id){
 			$wookapsula_errors->add(  'message', 'O pacote não foi inserido' );
 		}
-		$pedido->tipo_frete = 0;
-		$pedido->valor_venda = 0;
+
+		$method_id = @array_shift($this->get_items( 'shipping' ))['method_id'];
+		switch ($method_id) {
+			case 'correios-pac':
+				$pedido->tipo_frete = 0;
+				break;
+			case 'correios-sedex':
+				$pedido->tipo_frete = 1;
+				break;
+			default:
+				$wookapsula_errors->add(  'message', 'Tipo de frete não existenten para Kapsula' );
+				$pedido->tipo_frete = 0;
+				return NULL;
+		}
+		
+		$pedido->valor_venda = $this->get_total()*100;
 		$pedido->valor = 0;
 
 		return $pedido;

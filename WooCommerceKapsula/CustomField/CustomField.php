@@ -65,9 +65,9 @@ class CustomField{
 		        	<div>
 		        		<a class="btn btn-secondary" href="javascript:void(0)" id="button_update_kapsula_pedido_status" data-order="<?= $order->get_id() ?>">Atualizar status</a>
 				        <select class="select"  id="select_kapsula_pedido_status">
-				        	<option value="3">FATURADO</option>
-				        	<option value="6">ESTORNADO</option>
-				        	<option value="9">CANCELADO</option>
+				        	<option value="3">Faturado</option>
+				        	<option value="6">Estornado</option>
+				        	<option value="9">Cancelado</option>
 				        </select>
 				    </div>
 				</div>
