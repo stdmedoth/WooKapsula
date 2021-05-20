@@ -1,0 +1,14 @@
+{
+    "name": "calistu/woo-kapsula",
+    "type": "project",
+    "require": {
+        "calistu/kapsula":"x"
+    },
+    "authors": [
+        {
+            "name": "stdmedoth",
+            "email": "jovictor210@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev"
+}

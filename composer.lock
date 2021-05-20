@@ -1,0 +1,52 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "0296923571f35ad3a66291225c6d33a4",
+    "packages": [
+        {
+            "name": "calistu/kapsula",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/stdmedoth/Kapsula-SDK-PHP.git",
+                "reference": "2406415e7a3e0b0eb7dea18869e679d4765f7d57"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/stdmedoth/Kapsula-SDK-PHP/zipball/2406415e7a3e0b0eb7dea18869e679d4765f7d57",
+                "reference": "2406415e7a3e0b0eb7dea18869e679d4765f7d57",
+                "shasum": ""
+            },
+            "default-branch": true,
+            "type": "sdk",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "stdmedoth",
+                    "email": "jovictor210@gmail.com"
+                }
+            ],
+            "description": "Kit de desenvolvimento PHP para integração com a plataforma Kapsula",
+            "support": {
+                "issues": "https://github.com/stdmedoth/Kapsula-SDK-PHP/issues",
+                "source": "https://github.com/stdmedoth/Kapsula-SDK-PHP/tree/v1.0.1"
+            },
+            "time": "2021-05-19T00:18:37+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "dev",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": [],
+    "plugin-api-version": "2.0.0"
+}

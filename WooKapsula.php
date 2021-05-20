@@ -34,6 +34,7 @@ Class WooKapsulaPlugin{
 	public function init(){
 
 		require('Autoloader.php');
+		//require('vendor/autoload.php');
 		if ( !class_exists( 'WooCommerce' ) ) {
 			add_action('admin_notices', 'wordpress_inativo' );
 			return ;
