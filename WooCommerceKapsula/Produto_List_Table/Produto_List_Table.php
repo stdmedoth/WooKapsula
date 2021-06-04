@@ -64,7 +64,7 @@ Class Produto_List_Table extends WP_List_Table{
 	      	foreach ($_POST as $key => $value) {
 	        	if($key === 'post_id'){
 	          		foreach ($value as $key2 => $value2) {
-	            		delete_post_meta($value[0], 'kapsula_package');
+	            		delete_post_meta($value2, 'kapsula_package');
 	        		}
 	    		}
 	    	}

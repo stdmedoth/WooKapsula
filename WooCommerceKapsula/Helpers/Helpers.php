@@ -63,32 +63,33 @@ Class Helpers {
 
 		$pedido = new Pedido();
 		$pedido->id = $response->pedido;	
-		$status = 3;
-		try{
-			$response = $pedido->put([
-	 			"status" => intval($status)
-			]);
-			if(!$response){
-				$wookapsula_errors->add(  'message', 'Não foi possível mudar status do pedido' );	
-				return 0;	
-			}
-			if($response->code != 200){
-				if(isset($response->erros)){
-					foreach ($response->erros as $key => $value) {
-						foreach ($value as $key2 => $erro) {
-							$wookapsula_errors->add(  'message',  $key . ' : ' . $erro );	
-						}
-					}
-				}else{
-					$wookapsula_errors->add(  'message', $response->message );	
-				}
-			}
-
-		}catch(Exception $e){
-			$wookapsula_errors->add(  'message', $e->getMessage() );	
-		}
-		
 		$order->set_enviado(1, $pedido->id);
+		//$status = 3;
+		//try{
+		//	$response = $pedido->put([
+	 	//		"status" => intval($status)
+		//	]);
+		//	if(!$response){
+		//		$wookapsula_errors->add(  'message', 'Não foi possível mudar status do pedido' );	
+		//		return 0;	
+		//	}
+		//	if($response->code != 200){
+		//		if(isset($response->erros)){
+		//			foreach ($response->erros as $key => $value) {
+		//				foreach ($value as $key2 => $erro) {
+		//					$wookapsula_errors->add(  'message',  $key . ' : ' . $erro );	
+		//				}
+		//			}
+		//		}else{
+		//			$wookapsula_errors->add(  'message', $response->message );	
+		//		}
+		//	}
+
+		//}catch(Exception $e){
+		//	$wookapsula_errors->add(  'message', $e->getMessage() );	
+		//}
+		
+		
 		return 1;
 	}
 }

@@ -16,6 +16,7 @@ class WCK_Order extends WC_Order implements WCK_Integration{
 	public function Wc_to_Kapsula(){
 		
 		global $wookapsula_errors;
+		$logger = new Logger(); 
 
 		$pedido = new Pedido();
 		
@@ -28,19 +29,18 @@ class WCK_Order extends WC_Order implements WCK_Integration{
 		if(!$pedido->cliente_id){	
 			if(!$customer_id){
 				$wookapsula_errors->add(  'message', 'Cliente do pedido não possui login' );
+				$logger->add_log('Cliente do pedido não possui login');
 				return NULL;
 			}
 
 			$woocliente = new WCK_Customer($customer_id);
-			//var_dump($woocliente);
-			//die();
 			$ClienteKapsula = $woocliente->Wc_to_Kapsula();
-			//var_dump($ClienteKapsula);
-			//die();
+
 
 			$return = $ClienteKapsula->post();
 			if(!$return){
 				$wookapsula_errors->add(  'message', 'Erro ao integrar cliente do pedido' );
+				$logger->add_log('Erro ao integrar cliente do pedido');
 				return NULL;				
 			}
 			if( $return->code == 200 ){
@@ -64,6 +64,7 @@ class WCK_Order extends WC_Order implements WCK_Integration{
 		$pedido->pacote_id = $pacote->id;
 		if(!$pacote->id){
 			$wookapsula_errors->add(  'message', 'O pacote não foi inserido' );
+			$logger->add_log('O pacote não foi inserido');
 		}
 
 		$method_id = @array_shift($this->get_items( 'shipping' ))['method_id'];
@@ -74,7 +75,11 @@ class WCK_Order extends WC_Order implements WCK_Integration{
 			case 'correios-sedex':
 				$pedido->tipo_frete = 1;
 				break;
+			case 'free_shipping':
+				$pedido->tipo_frete = 0;
+				break;
 			default:
+				$logger->add_log(['Tipo de frete não existenten para Kapsula', $method_id]);
 				$wookapsula_errors->add(  'message', 'Tipo de frete não existenten para Kapsula' );
 				$pedido->tipo_frete = 0;
 				return NULL;

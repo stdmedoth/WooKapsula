@@ -55,10 +55,24 @@ class Templates {
             $clientes_table->display();
           ?>
         </form>
+        <div class="row">
+          <div class="col-lg">
+            <div class="card" style="">
+              <div class="card-header">
+                <h5 class="card-title">Kapsula Logger</h5>
+              </div>
+              <div class="card-body">
+                <p class="card-text">Analise tudo o que ocorre no backend do Plugin WooKapusla</p>
+                <textarea class="form-control"><?php $logger = new Logger();echo $logger->get_log(); ?></textarea> 
+              </div>
+            </div>  
+          </div>  
+        </div>  
     </div>
 
     <?php  
   }
+
 
   public function popup_modal($id='kapsula_popup_modal', $title='Popup', $message=''){
     ?>

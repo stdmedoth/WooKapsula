@@ -19,6 +19,8 @@ use WooKapsula\Templates;
 use WooKapsula\Helpers;
 use WooKapsula\API;
 
+use WooKapsula\Logger;
+
 define('__KAPSULA_TOKEN__', get_option('wookapsula_token'));
 
 //use WP_Error;

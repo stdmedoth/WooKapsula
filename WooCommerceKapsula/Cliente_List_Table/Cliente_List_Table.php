@@ -79,7 +79,7 @@ Class Cliente_List_Table extends WP_List_Table{
 	      	foreach ($_POST as $key => $value) {
 	        	if($key === 'user_id'){
 	          		foreach ($value as $key2 => $value2) {
-	            		delete_user_meta($value[0], 'id_kapsula');
+	            		delete_user_meta($value2, 'id_kapsula');
 	        		}
 	    		}
 	    	}

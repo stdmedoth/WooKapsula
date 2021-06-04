@@ -1,5 +1,4 @@
 <?php
-
 namespace WooKapsula;
 use Kapsula\Pedido;
 use WooKapsula\WCK_Order;
@@ -81,11 +80,18 @@ class API{
 			$wookapsula_errors->add(  'message', 'Pedido sem o ID inserir id' );	
 			return rest_ensure_response( $this->wp_error_to_response() );	
 		}
-		$id_kapsula = get_post_meta($id, '_kapsula_id')[0];
+
+		$post_meta = get_post_meta($id, '_kapsula_id');
+		if(!$post_meta){
+			$wookapsula_errors->add(  'message', 'Pedido sem integracao Kapsula' );	
+			return rest_ensure_response( $this->wp_error_to_response() );			
+		}
+		$id_kapsula = $post_meta[0];
 		if(!$id_kapsula){
 			$wookapsula_errors->add(  'message', 'Pedido sem integracao Kapsula' );	
 			return rest_ensure_response( $this->wp_error_to_response() );	
-		}
+		}	
+		
 		$status = $request->get_param('status');
 		
 		if(!$status){
@@ -126,16 +132,20 @@ class API{
 	}
 	
 	public function send_pedido( $request ){
+
 		global $wookapsula_errors;
+		$logger = new Logger(); 
 
 		$id = $request->get_param('id');
 		if(!$id){
 			$wookapsula_errors->add(  'message', 'Pedido sem o ID inserir id' );	
+			$logger->add_log(['Pedido sem o ID inserir id na API de envio de pedido']);
 			return rest_ensure_response( $this->wp_error_to_response() );	
 		}
 		$order = new WCK_Order($id);
 		$flag_enviado = $order->get_enviado();
 		if($flag_enviado && $flag_enviado[0] == 1){
+			$logger->add_log(['Pedido já enviado para Kapsula', "pedido $id"]);
 			$wookapsula_errors->add(  'message', 'Pedido já enviado para Kapsula' );	
 			return rest_ensure_response( $this->wp_error_to_response() );	
 		}
@@ -148,12 +158,13 @@ class API{
 			if(!$response){
 				return rest_ensure_response( $this->wp_error_to_response() );	
 			}
-			$pedido->id = $response->pedido;
 			if($response->code != 200){
 				
 				if(isset($response->erros)){
+					$logger->add_log(["Erros abaixo no envio de pedido"]);
 					foreach ($response->erros as $key => $value) {
 						foreach ($value as $key2 => $erro) {
+							$logger->add_log([ $key, $erro ]);
 							$wookapsula_errors->add(  'message',  $key . ' : ' . $erro );	
 						}
 					}
@@ -161,8 +172,10 @@ class API{
 					$wookapsula_errors->add(  'message', $response->message );	
 				}
 				return rest_ensure_response( $this->wp_error_to_response() );	
-			}	
+			}
+			$pedido->id = $response->pedido;	
 		}catch(Exception $e){
+			$logger->add_log([ "Erro no envio de pedido", $e->getMessage() ]);
 			return rest_ensure_response( $e->getMessage() );	
 		}
 		
@@ -170,38 +183,41 @@ class API{
 		$retorno['message'] = $response->message;
 		$order->set_enviado(1, $pedido->id);
 		
-		try{
-			$response = $pedido->put([
-	 			"status" => 3
-			]);
-			if(!$response){
-				$wookapsula_errors->add(  'message', 'Não foi possível mudar status do pedido' );	
-				return rest_ensure_response( $this->wp_error_to_response() );	
-			}
-			if($response->code != 200){
-				if(isset($response->erros)){
-					foreach ($response->erros as $key => $value) {
-						foreach ($value as $key2 => $erro) {
-							$wookapsula_errors->add(  'message',  $key . ' : ' . $erro );	
-						}
-					}
-				}else{
-					$wookapsula_errors->add(  'message', $response->message );	
-				}
-				return rest_ensure_response( $this->wp_error_to_response() );	
-					
-			}
+		//try{
+		//	$response = $pedido->put([
+	 	//		"status" => 3
+		//	]);
+		//	if(!$response){
+		//		$wookapsula_errors->add(  'message', 'Não foi possível mudar status do pedido' );	
+		//		return rest_ensure_response( $this->wp_error_to_response() );	
+		//	}
+		//	if($response->code != 200){
+		//		if(isset($response->erros)){
+		//			foreach ($response->erros as $key => $value) {
+		//				foreach ($value as $key2 => $erro) {
+		//					$wookapsula_errors->add(  'message',  $key . ' : ' . $erro );	
+		//				}
+		//			}
+		//		}else{
+		//			$wookapsula_errors->add(  'message', $response->message );	
+		//		}
+		//		return rest_ensure_response( $this->wp_error_to_response() );	
+		//			
+		//	}
 
-		}catch(Exception $e){
-			return rest_ensure_response( $e->getMessage() );	
-		}
-		
+		//}catch(Exception $e){
+		//	return rest_ensure_response( $e->getMessage() );	
+		//}
+		$logger->add_log([ "envio de pedido" ]);
 		return rest_ensure_response(  $retorno  );	
 	}
 
 	public function send_produto( $request ){
+		$logger = new Logger(); 
+
 		$id = $request->get_param('id');
 		if(!$id){
+			$logger->add_log('necessário inserir id para envio de produto pela API');
 			return rest_ensure_response( ['code'=>null, 'message' => 'necessário inserir id'] );	
 		}
 		$product = new WCK_Product($id);
@@ -211,12 +227,16 @@ class API{
 			return rest_ensure_response( 'erro no retorno' );	
 		}
 
+		$logger->add_log([ "envio de produto" ]);
 		return rest_ensure_response( $response  );
 	}
 
 	public function send_cliente( $request ){
+		$logger = new Logger(); 
+
 		$id = $request->get_param('id');
 		if(!$id){
+			$logger->add_log('necessário inserir id para envio de cliente pela API');
 			return rest_ensure_response( ['code'=>null, 'message' => 'necessário inserir id'] );	
 		}
 		$customer = new WCK_Customer($id);
@@ -225,7 +245,7 @@ class API{
 		if(!$response){
 			return rest_ensure_response( 'erro no retorno' );	
 		}
-
+		$logger->add_log([ "envio de cliente" ]);
 		return rest_ensure_response( $response  );
 	}
 	
