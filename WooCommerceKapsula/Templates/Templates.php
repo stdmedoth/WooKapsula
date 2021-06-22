@@ -44,7 +44,6 @@ class Templates {
             <textarea class="form-control" style="width: 100%; " name="wookapsula_token"><?=get_option('wookapsula_token')?></textarea>
           </div>
           <button type="submit" class="button button-primary">Atualizar token</button>
-
         </form>
 
         <form class="form-control" action='?page=wookapsula' method='post'>
@@ -58,6 +57,7 @@ class Templates {
 
         <form class="form-control" action='?page=wookapsula' method='post'>
           <h1 class='wp-heading-inline'>Clientes</h1>
+          <button type="button" id="puxa_cli_kapsula" class="button button-rounded">Puxar clientes da Kapsula</button>
           <?php
             $clientes_table = new Cliente_List_Table();
             $clientes_table->prepare_items();
@@ -82,18 +82,29 @@ class Templates {
                 <div class="card-header">
                   <h5 class="card-title">Configurações Kapsula</h5>
                 </div>
-                <div class="card-body">
-                  Enviar pedidos como faturados para KapSula?
-                  <input
-                    type="checkbox"
-                    id="wookapsula_envia_faturado"
-                    name="wookapsula_envia_faturado"
-                    value="1"
-                    <?php if(get_option('wookapsula_envia_faturado')==1) echo 'checked'; ?>>
-                  <input type="hidden"  name="config_form" value="sended">
+                <div class="row">
+                  <div class="card-body">
+                    Enviar pedidos como faturados para KapSula?
+                    <input
+                      type="checkbox"
+                      id="wookapsula_envia_faturado"
+                      name="wookapsula_envia_faturado"
+                      value="1"
+                      <?php if(get_option('wookapsula_envia_faturado')==1) echo 'checked'; ?>>
+                    <input type="hidden"  name="config_form" value="sended">
+                  </div>
                 </div>
                 <div class="card-footer">
                     <button type="submit" class="button button-primary">Atualizar Configurações</button>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg">
+              <div class="card">
+                <div class="row">
+                  <div class="card-body">
+                    <input type="button" id="limpar_integracao" class="button" value="Resetar integrações">
+                  </div>
                 </div>
               </div>
             </div>

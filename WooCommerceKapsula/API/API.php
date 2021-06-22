@@ -70,6 +70,24 @@ class API{
 					// Here we register our permissions callback. The callback is fired before the main callback to check if the current user can access the endpoint.
 					'permission_callback' => [$this, 'api_permission_called'],
 			) );
+
+			register_rest_route( 'kapsula/v1', 'integra/clientes/', array(
+					// By using this constant we ensure that when the WP_REST_Server changes our readable endpoints will work as intended.
+					'methods'  => WP_REST_Server::READABLE,
+					// Here we register our callback. The callback is fired when this endpoint is matched by the WP_REST_Server class.
+					'callback' => [$this, 'integra_clientes'],
+					// Here we register our permissions callback. The callback is fired before the main callback to check if the current user can access the endpoint.
+					'permission_callback' => [$this, 'api_permission_called'],
+			) );
+
+			register_rest_route( 'kapsula/v1', 'integra/limpar/', array(
+					// By using this constant we ensure that when the WP_REST_Server changes our readable endpoints will work as intended.
+					'methods'  => WP_REST_Server::READABLE,
+					// Here we register our callback. The callback is fired when this endpoint is matched by the WP_REST_Server class.
+					'callback' => [$this, 'limpar_integracao'],
+					// Here we register our permissions callback. The callback is fired before the main callback to check if the current user can access the endpoint.
+					'permission_callback' => [$this, 'api_permission_called'],
+			) );
 	}
 
 	public function wp_error_to_response(){
@@ -276,6 +294,24 @@ class API{
 			return rest_ensure_response( ['code'=>200, 'message' => 'Produtos integrados com sucesso'] );
 		}
 		return rest_ensure_response( ['code'=>null, 'message' => $result] );
+	}
+
+	public function integra_clientes($request){
+		$helper = new Helpers();
+		$result = $helper->integrate_customers_from_kapsula();
+		if($result && $result > 0){
+			return rest_ensure_response( ['code'=>200, 'message' => 'Clientes integrados com sucesso : ' . $result . ' Clientes'] );
+		}
+		return rest_ensure_response( $this->wp_error_to_response() );
+	}
+
+	public function limpar_integracao($request){
+		$helper = new Helpers();
+		$result = $helper->limpar_integracao();
+		if($result && $result == 'ok'){
+			return rest_ensure_response( ['code'=>200, 'message' => 'Integração removida com sucesso'] );
+		}
+		return rest_ensure_response( $this->wp_error_to_response() );
 	}
 
 }

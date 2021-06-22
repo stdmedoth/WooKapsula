@@ -5,6 +5,7 @@ namespace WooKapsula;
 use WooKapsula\WCK_Order;
 use WooKapsula\WCK_Product;
 use Kapsula\Pedido;
+use Kapsula\Cliente;
 use Kapsula\Produto;
 
 Class Helpers {
@@ -20,13 +21,51 @@ Class Helpers {
 		}
 	}
 
+	public function limpar_integracao(){
+		global $wpdb;
+		global $wookapsula_errors;
+		try{
+			$data = $wpdb->get_results("DELETE FROM " . $wpdb->prefix."usermeta WHERE meta_key = 'id_kapsula'", ARRAY_A); //clientes
+			$data = $wpdb->get_results("DELETE FROM " . $wpdb->prefix."postmeta WHERE meta_key = 'id_kapsula'", ARRAY_A); //produtos
+
+			$data = $wpdb->get_results("DELETE FROM " . $wpdb->prefix."postmeta WHERE meta_key = '_kapsula_id'", ARRAY_A); //pedidos
+			$data = $wpdb->get_results("DELETE FROM " . $wpdb->prefix."postmeta WHERE meta_key = '_kapsula_sended'", ARRAY_A); //pedidos
+			return 'ok';
+		}catch(Exception $e){
+			$wookapsula_errors->add(  'message', $e->getMessage() );
+			return NULL;
+		}
+	}
+
+	public function integrate_customers_from_kapsula(){
+		global $wpdb;
+		global $wookapsula_errors;
+		$cli_qnt = 0;
+		$clientes = new Cliente();
+		$response = $clientes->get();
+		if($response){
+			foreach ($response->data as $cliente) {
+					$data = $wpdb->get_results("SELECT * FROM " . $wpdb->prefix."usermeta WHERE meta_key = 'id_kapsula' and meta_value = " . $cliente->id, ARRAY_A);
+					$exists_email = $wpdb->get_results("SELECT * FROM " . $wpdb->prefix."users WHERE user_email like '" . $cliente->email . "'", ARRAY_A);
+					if(!$data && !$exists_email){
+						$wc_cli = new WCK_Customer([]);
+						if(!$wc_cli->populate_from_Kapsula($cliente))
+							return NULL;
+						$cli_qnt++;
+					}
+			}
+			return $cli_qnt;
+		}
+		$wookapsula_errors->add(  'message', 'não foi possível receber retorno dos clientes' );
+		return NULL;
+	}
+
 	public function integrate_products_from_kapsula(){
 		global $wpdb;
 		$produtos = new Produto();
 		$response = $produtos->get();
 		if($response){
 			foreach ($response->data as $produto) {
-	        //var_dump($produto);
 	        $data = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."posts p inner join ".$wpdb->prefix."postmeta m on m.post_id = p.id where post_type = 'product' and meta_key = 'id_kapsula' and meta_value = ". $produto->id, ARRAY_A);
 	        if(!$data){
 	          $wc_prod = new WCK_Product([]);

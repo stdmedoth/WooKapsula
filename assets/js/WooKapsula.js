@@ -54,7 +54,54 @@ var jq = jQuery.noConflict();
 						loading.out();
 						jq('#puxa_prod_kapsula').notify(textStatus + ' ' +error, "error");
 					}
+				});
+			});
 
+			jq(document).on("click", '#puxa_cli_kapsula', (e)=>{
+				var loading = new Loading();
+
+				jq.ajax({
+					url: '/wp-json/kapsula/v1/integra/clientes',
+					data: {
+
+					},
+					success: retorno=>{
+						loading.out();
+						if(retorno.code == 200){
+							jq('#puxa_cli_kapsula').notify(retorno.message, "success");
+						}else{
+							jq('#puxa_cli_kapsula').notify(retorno[0].message, "error");
+						}
+
+					},
+					error: (xhr, textStatus, error)=>{
+						loading.out();
+						jq('#puxa_cli_kapsula').notify(textStatus + ' ' +error, "error");
+					}
+				});
+			});
+
+			jq(document).on("click", '#limpar_integracao', (e)=>{
+				var loading = new Loading();
+
+				jq.ajax({
+					url: '/wp-json/kapsula/v1/integra/limpar',
+					data: {
+
+					},
+					success: retorno=>{
+						loading.out();
+						if(retorno.code == 200){
+							jq('#limpar_integracao').notify(retorno.message, "success");
+						}else{
+							jq('#limpar_integracao').notify(retorno[0].message, "error");
+						}
+
+					},
+					error: (xhr, textStatus, error)=>{
+						loading.out();
+						jq('#limpar_integracao').notify(textStatus + ' ' +error, "error");
+					}
 				});
 			});
 
