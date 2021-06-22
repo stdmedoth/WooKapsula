@@ -1,10 +1,10 @@
-<?php 
+<?php
 
 namespace WooKapsula;
 use WP_List_Table;
 
 Class Produto_List_Table extends WP_List_Table{
-	
+
 	public function prepare_items(){
 
 		$this->process_bulk_action();
@@ -26,7 +26,7 @@ Class Produto_List_Table extends WP_List_Table{
     	$this->_column_headers = array($columns, $hidden, $sortable);
     	$this->items = $data;
 
-	} 
+	}
 
 	public function get_columns(){
 		return array(
@@ -64,7 +64,7 @@ Class Produto_List_Table extends WP_List_Table{
 	      	foreach ($_POST as $key => $value) {
 	        	if($key === 'post_id'){
 	          		foreach ($value as $key2 => $value2) {
-	            		delete_post_meta($value2, 'kapsula_package');
+	            		delete_post_meta($value2, 'id_kapsula');
 	        		}
 	    		}
 	    	}
@@ -97,8 +97,8 @@ Class Produto_List_Table extends WP_List_Table{
 	private function table_data(){
 		global $wpdb;
 
-		$data = $wpdb->get_results("SELECT post_id, post_title, meta_value FROM ".$wpdb->prefix."posts p inner join ".$wpdb->prefix."postmeta m on m.post_id = p.id where post_type = 'product' and meta_key = 'kapsula_package'", ARRAY_A);
-		
+		$data = $wpdb->get_results("SELECT post_id, post_title, meta_value FROM ".$wpdb->prefix."posts p inner join ".$wpdb->prefix."postmeta m on m.post_id = p.id where post_type = 'product' and meta_key = 'id_kapsula'", ARRAY_A);
+
 
 		return $data;
 	}

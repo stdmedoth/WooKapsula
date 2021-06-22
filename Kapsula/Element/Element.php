@@ -18,7 +18,7 @@ Class Element {
 
 	public function post(){
 		$response = $this->request->post($this->to_json());
-		return json_decode($response);		
+		return json_decode($response);
 	}
 
 	public function get( $id = null ){
@@ -31,24 +31,25 @@ Class Element {
 		}else{
 			$this->objects = $this->request->get();
 		}
-		return $this->objects;			
+
+		return $this->objects;
 	}
 
 	public function put( $data ){
-		
+
 		if( !$data ){
 			return null;
 		}
 		//$payload = json_encode($data);
-		return json_decode($this->request->put($this->id, $data));			
-	
+		return json_decode($this->request->put($this->id, $data));
+
 	}
 
 
    	public function to_json(){
-        return json_encode(get_object_vars($this));    
+        return json_encode(get_object_vars($this));
     }
 
 
 
-}    
+}

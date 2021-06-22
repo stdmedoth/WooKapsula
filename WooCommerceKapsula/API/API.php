@@ -11,8 +11,8 @@ class API{
 	}
 
 	public function api_permission_called(){
-	
-		return true;	
+
+		return true;
 	}
 
 	public function register_routes() {
@@ -61,6 +61,15 @@ class API{
 	        // Here we register our permissions callback. The callback is fired before the main callback to check if the current user can access the endpoint.
 	        'permission_callback' => [$this, 'api_permission_called'],
 	    ) );
+
+			register_rest_route( 'kapsula/v1', 'integra/produtos/', array(
+					// By using this constant we ensure that when the WP_REST_Server changes our readable endpoints will work as intended.
+					'methods'  => WP_REST_Server::READABLE,
+					// Here we register our callback. The callback is fired when this endpoint is matched by the WP_REST_Server class.
+					'callback' => [$this, 'integra_produtos'],
+					// Here we register our permissions callback. The callback is fired before the main callback to check if the current user can access the endpoint.
+					'permission_callback' => [$this, 'api_permission_called'],
+			) );
 	}
 
 	public function wp_error_to_response(){
@@ -77,26 +86,26 @@ class API{
 		global $wookapsula_errors;
 		$id = $request->get_param('id');
 		if(!$id){
-			$wookapsula_errors->add(  'message', 'Pedido sem o ID inserir id' );	
-			return rest_ensure_response( $this->wp_error_to_response() );	
+			$wookapsula_errors->add(  'message', 'Pedido sem o ID inserir id' );
+			return rest_ensure_response( $this->wp_error_to_response() );
 		}
 
 		$post_meta = get_post_meta($id, '_kapsula_id');
 		if(!$post_meta){
-			$wookapsula_errors->add(  'message', 'Pedido sem integracao Kapsula' );	
-			return rest_ensure_response( $this->wp_error_to_response() );			
+			$wookapsula_errors->add(  'message', 'Pedido sem integracao Kapsula' );
+			return rest_ensure_response( $this->wp_error_to_response() );
 		}
 		$id_kapsula = $post_meta[0];
 		if(!$id_kapsula){
-			$wookapsula_errors->add(  'message', 'Pedido sem integracao Kapsula' );	
-			return rest_ensure_response( $this->wp_error_to_response() );	
-		}	
-		
+			$wookapsula_errors->add(  'message', 'Pedido sem integracao Kapsula' );
+			return rest_ensure_response( $this->wp_error_to_response() );
+		}
+
 		$status = $request->get_param('status');
-		
+
 		if(!$status){
 			$wookapsula_errors->add(  'message', 'Pedido sem o Status, inserir status' );
-			return rest_ensure_response( $this->wp_error_to_response() );	
+			return rest_ensure_response( $this->wp_error_to_response() );
 		}
 
 		$pedido = new Pedido();
@@ -106,125 +115,136 @@ class API{
 	 			"status" => intval($status)
 			]);
 			if(!$response){
-				$wookapsula_errors->add(  'message', 'Não foi possível mudar status do pedido' );	
-				return rest_ensure_response( $this->wp_error_to_response() );	
+				$wookapsula_errors->add(  'message', 'Não foi possível mudar status do pedido' );
+				return rest_ensure_response( $this->wp_error_to_response() );
 			}
 			if($response->code != 200){
 				if(isset($response->erros)){
 					foreach ($response->erros as $key => $value) {
 						foreach ($value as $key2 => $erro) {
-							$wookapsula_errors->add(  'message',  $key . ' : ' . $erro );	
+							$wookapsula_errors->add(  'message',  $key . ' : ' . $erro );
 						}
 					}
 				}else{
-					$wookapsula_errors->add(  'message', $response->message );	
+					$wookapsula_errors->add(  'message', $response->message );
 				}
-				return rest_ensure_response( $this->wp_error_to_response() );	
+				return rest_ensure_response( $this->wp_error_to_response() );
 			}
-			
+
 			$retorno['code'] = $response->code;
 			$retorno['message'] = $response->message;
-			return rest_ensure_response(  $retorno  );	
+			return rest_ensure_response(  $retorno  );
 
 		}catch(Exception $e){
-			return rest_ensure_response( $e->getMessage() );	
+			return rest_ensure_response( $e->getMessage() );
 		}
 	}
-	
+
 	public function send_pedido( $request ){
 
 		global $wookapsula_errors;
-		$logger = new Logger(); 
+		$logger = new Logger();
 
 		$id = $request->get_param('id');
 		if(!$id){
-			$wookapsula_errors->add(  'message', 'Pedido sem o ID inserir id' );	
+			$wookapsula_errors->add(  'message', 'Pedido sem o ID inserir id' );
 			$logger->add_log(['Pedido sem o ID inserir id na API de envio de pedido']);
-			return rest_ensure_response( $this->wp_error_to_response() );	
+			return rest_ensure_response( $this->wp_error_to_response() );
 		}
 		$order = new WCK_Order($id);
 		$flag_enviado = $order->get_enviado();
 		if($flag_enviado && $flag_enviado[0] == 1){
 			$logger->add_log(['Pedido já enviado para Kapsula', "pedido $id"]);
-			$wookapsula_errors->add(  'message', 'Pedido já enviado para Kapsula' );	
-			return rest_ensure_response( $this->wp_error_to_response() );	
+			$wookapsula_errors->add(  'message', 'Pedido já enviado para Kapsula' );
+			return rest_ensure_response( $this->wp_error_to_response() );
 		}
 		$pedido = $order->Wc_to_Kapsula();
-		if(!$pedido){	
+		if(!$pedido){
 			return rest_ensure_response( $this->wp_error_to_response() );
 		}
 		try{
-			$response = $pedido->post();
+			$response = $pedido->shopping_cart();
 			if(!$response){
-				return rest_ensure_response( $this->wp_error_to_response() );	
+				return rest_ensure_response( $this->wp_error_to_response() );
 			}
 			if($response->code != 200){
-				
+
 				if(isset($response->erros)){
 					$logger->add_log(["Erros abaixo no envio de pedido"]);
 					foreach ($response->erros as $key => $value) {
 						foreach ($value as $key2 => $erro) {
 							$logger->add_log([ $key, $erro ]);
-							$wookapsula_errors->add(  'message',  $key . ' : ' . $erro );	
+							$wookapsula_errors->add(  'message',  $key . ' : ' . $erro );
 						}
 					}
 				}else{
-					$wookapsula_errors->add(  'message', $response->message );	
+					$wookapsula_errors->add(  'message', $response->message );
 				}
-				return rest_ensure_response( $this->wp_error_to_response() );	
+				return rest_ensure_response( $this->wp_error_to_response() );
 			}
-			$pedido->id = $response->pedido;	
+			$pedido->id = $response->pedidos;
 		}catch(Exception $e){
 			$logger->add_log([ "Erro no envio de pedido", $e->getMessage() ]);
-			return rest_ensure_response( $e->getMessage() );	
+			return rest_ensure_response( $e->getMessage() );
 		}
-		
+
 		$retorno['code'] = $response->code;
 		$retorno['message'] = $response->message;
-		$order->set_enviado(1, $pedido->id);
-		
-		//try{
-		//	$response = $pedido->put([
-	 	//		"status" => 3
-		//	]);
-		//	if(!$response){
-		//		$wookapsula_errors->add(  'message', 'Não foi possível mudar status do pedido' );	
-		//		return rest_ensure_response( $this->wp_error_to_response() );	
-		//	}
-		//	if($response->code != 200){
-		//		if(isset($response->erros)){
-		//			foreach ($response->erros as $key => $value) {
-		//				foreach ($value as $key2 => $erro) {
-		//					$wookapsula_errors->add(  'message',  $key . ' : ' . $erro );	
-		//				}
-		//			}
-		//		}else{
-		//			$wookapsula_errors->add(  'message', $response->message );	
-		//		}
-		//		return rest_ensure_response( $this->wp_error_to_response() );	
-		//			
-		//	}
+		if(is_array($pedido->id)){
+			foreach ($pedido->id as $id) {
+				$order->set_enviado(1, $id);
+			}
+		}else{
+			$order->set_enviado(1, $pedido->id);
+		}
 
-		//}catch(Exception $e){
-		//	return rest_ensure_response( $e->getMessage() );	
-		//}
+
+
+		if(get_option('wookapsula_envia_faturado')!=0){
+			try{
+				$response = $pedido->put([
+		 			"status" => 3
+				]);
+				if(!$response){
+					$wookapsula_errors->add(  'message', 'Não foi possível mudar status do pedido' );
+					return rest_ensure_response( $this->wp_error_to_response() );
+				}
+				if($response->code != 200){
+					if(isset($response->erros)){
+						foreach ($response->erros as $key => $value) {
+							foreach ($value as $key2 => $erro) {
+								$wookapsula_errors->add(  'message',  $key . ' : ' . $erro );
+							}
+						}
+					}else{
+						$wookapsula_errors->add(  'message', $response->message );
+					}
+					return rest_ensure_response( $this->wp_error_to_response() );
+
+				}
+
+			}catch(Exception $e){
+				return rest_ensure_response( $e->getMessage() );
+			}
+		}
+
 		$logger->add_log([ "envio de pedido" ]);
-		return rest_ensure_response(  $retorno  );	
+		return rest_ensure_response(  $retorno  );
 	}
 
 	public function send_produto( $request ){
-		$logger = new Logger(); 
+		$logger = new Logger();
 
 		$id = $request->get_param('id');
 		if(!$id){
 			$logger->add_log('necessário inserir id para envio de produto pela API');
-			return rest_ensure_response( ['code'=>null, 'message' => 'necessário inserir id'] );	
+			return rest_ensure_response( ['code'=>null, 'message' => 'necessário inserir id'] );
 		}
 		$product = new WCK_Product($id);
 		$produto = $product->Wc_to_Kapsula();
 		$response = $produto->post();
 		if(!$response){
-			return rest_ensure_response( 'erro no retorno' );	
+			return rest_ensure_response( 'erro no retorno' );
 		}
 
 		$logger->add_log([ "envio de produto" ]);
@@ -232,21 +252,30 @@ class API{
 	}
 
 	public function send_cliente( $request ){
-		$logger = new Logger(); 
+		$logger = new Logger();
 
 		$id = $request->get_param('id');
 		if(!$id){
 			$logger->add_log('necessário inserir id para envio de cliente pela API');
-			return rest_ensure_response( ['code'=>null, 'message' => 'necessário inserir id'] );	
+			return rest_ensure_response( ['code'=>null, 'message' => 'necessário inserir id'] );
 		}
 		$customer = new WCK_Customer($id);
 		$cliente = $customer->Wc_to_Kapsula();
 		$response = $cliente->post();
 		if(!$response){
-			return rest_ensure_response( 'erro no retorno' );	
+			return rest_ensure_response( 'erro no retorno' );
 		}
 		$logger->add_log([ "envio de cliente" ]);
 		return rest_ensure_response( $response  );
 	}
-	
+
+	public function integra_produtos($request){
+		$helper = new Helpers();
+		$result = $helper->integrate_products_from_kapsula();
+		if($result == 'ok'){
+			return rest_ensure_response( ['code'=>200, 'message' => 'Produtos integrados com sucesso'] );
+		}
+		return rest_ensure_response( ['code'=>null, 'message' => $result] );
+	}
+
 }

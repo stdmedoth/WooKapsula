@@ -1,10 +1,10 @@
-<?php 
+<?php
 
 namespace WooKapsula;
 use WP_List_Table;
 
 Class Cliente_List_Table extends WP_List_Table{
-	
+
 	public function prepare_items(){
 
 		$this->process_bulk_action();
@@ -25,7 +25,7 @@ Class Cliente_List_Table extends WP_List_Table{
     	$data = array_slice($data,(($currentPage-1)*$perPage),$perPage);
     	$this->_column_headers = array($columns, $hidden, $sortable);
     	$this->items = $data;
-	} 
+	}
 
 	public function get_columns(){
 		return array(
@@ -96,7 +96,7 @@ Class Cliente_List_Table extends WP_List_Table{
 		global $wpdb;
 
 		$data = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."usermeta WHERE meta_key = 'id_kapsula'", ARRAY_A);
-		
+
 		$clientes_id = array_map(function($n){
 			return $n['user_id'];
 		}, $data);
@@ -104,12 +104,12 @@ Class Cliente_List_Table extends WP_List_Table{
 		if(!$clientes_id || !count($clientes_id))
 			return [];
 
-		$clientes_nomes = $wpdb->get_results("SELECT user_id,  meta_value FROM ".$wpdb->prefix."usermeta WHERE meta_key = 'first_name' and user_id IN (" . implode($clientes_id, ',') . ")", ARRAY_A);
+		$clientes_nomes = $wpdb->get_results("SELECT user_id,  meta_value FROM ".$wpdb->prefix."usermeta WHERE meta_key = 'first_name' and user_id IN (" . implode(',', $clientes_id) . ")", ARRAY_A);
 
-		$clientes_sobrenomes = $wpdb->get_results("SELECT user_id,  meta_value FROM ".$wpdb->prefix."usermeta WHERE meta_key = 'last_name' and user_id IN (" . implode($clientes_id, ',') . ")", ARRAY_A);
+		$clientes_sobrenomes = $wpdb->get_results("SELECT user_id,  meta_value FROM ".$wpdb->prefix."usermeta WHERE meta_key = 'last_name' and user_id IN (" . implode(',', $clientes_id) . ")", ARRAY_A);
 
-		$cliente_idkapsula = $wpdb->get_results("SELECT user_id,  meta_value FROM ".$wpdb->prefix."usermeta WHERE meta_key = 'id_kapsula' and user_id IN (" . implode($clientes_id, ',') . ")", ARRAY_A);
-		
+		$cliente_idkapsula = $wpdb->get_results("SELECT user_id,  meta_value FROM ".$wpdb->prefix."usermeta WHERE meta_key = 'id_kapsula' and user_id IN (" . implode(',', $clientes_id) . ")", ARRAY_A);
+
 		$clientes = [];
 		foreach ($clientes_id as $key => $id) {
 			$clientes[$key] = [];

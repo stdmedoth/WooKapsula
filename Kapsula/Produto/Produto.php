@@ -16,6 +16,6 @@ Class Produto extends Element{
 	public $id;
   	public $nome;
   	public $status;
-
+		public $quantidade;
 
 }

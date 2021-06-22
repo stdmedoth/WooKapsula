@@ -24,14 +24,19 @@ class Logger {
 		return $bytes;
 	}
 
-	public function get_log($file = 'Kapsula_Logger') {
+	public function get_log($filename = 'Kapsula_Logger') {
 		
 		$upload_dir = wp_upload_dir();
 		$upload_dir = $upload_dir['basedir'];
 		$mode = 'r';
-		$file  = $upload_dir . '/' . $file . '.log';
-		
-		$content = file_get_contents($file);
+		$filename  = $upload_dir . '/' . $filename . '.log';
+		$file  = @fopen( $filename, $mode );
+		if($file){
+			$content = file_get_contents($filename);
+		}else{
+			$content = 'Não foi possível abrir arquivo de logs';
+		}
+
 		return $content;
 	}
 
