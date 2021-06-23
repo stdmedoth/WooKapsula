@@ -16,12 +16,16 @@ Class Element {
 	public $objects;
 	public $data_obj;
 
+	public $current_page = 1;
+	public $last_page;
+
 	public function post(){
 		$response = $this->request->post($this->to_json());
 		return json_decode($response);
 	}
 
-	public function get( $id = null ){
+	public function get( $id = null){
+
 		$obj = substr($this->route, 0, -1);
 		if($id){
 			$this->objects = $this->request->get( $id )->{"$this->data_obj"};
@@ -29,7 +33,12 @@ Class Element {
 				$this->{$key} = $value;
 			}
 		}else{
-			$this->objects = $this->request->get();
+			$this->objects = $this->request->get(FALSE, $this->current_page);
+			if($this->objects && $this->objects->last_page){
+				$this->last_page = $this->objects->last_page;
+				$this->current_page++;
+			}
+
 		}
 
 		return $this->objects;

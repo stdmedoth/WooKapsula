@@ -116,7 +116,7 @@ class Templates {
               </div>
               <div class="card-body">
                 <p class="card-text">Analise tudo o que ocorre no backend do Plugin WooKapusla</p>
-                <textarea class="form-control"><?php $logger = new Logger();echo $logger->get_log(); ?></textarea>
+                <textarea style="width: 100%;" class="form-control"><?php $logger = new Logger();echo $logger->get_log(); ?></textarea>
               </div>
             </div>
           </div>

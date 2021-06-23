@@ -41,12 +41,15 @@ Class Request {
 
 	}
 
-	public function get( $id = null ){
+	public function get( $id = null, $page = 1 ){
 
 		$url = $this->api_url;
 		if($id){
 			$url = $this->api_url . '/' . $id;
+		}else{
+			$url = $this->api_url . '?page=' . $page;
 		}
+		
 		$curl = curl_init();
 
 		curl_setopt($curl, CURLOPT_URL, $url);

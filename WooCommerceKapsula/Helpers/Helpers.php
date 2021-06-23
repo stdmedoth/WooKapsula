@@ -42,22 +42,36 @@ Class Helpers {
 		global $wookapsula_errors;
 		$cli_qnt = 0;
 		$clientes = new Cliente();
-		$response = $clientes->get();
-		if($response){
-			foreach ($response->data as $cliente) {
+
+		$current_page = 0;
+		$last_page = 1;
+
+		do{
+			$response = $clientes->get();
+			if($response){
+				$current_page = $response->current_page;
+				$last_page = $response->last_page;
+				
+				foreach ($response->data as $cliente) {
 					$data = $wpdb->get_results("SELECT * FROM " . $wpdb->prefix."usermeta WHERE meta_key = 'id_kapsula' and meta_value = " . $cliente->id, ARRAY_A);
 					$exists_email = $wpdb->get_results("SELECT * FROM " . $wpdb->prefix."users WHERE user_email like '" . $cliente->email . "'", ARRAY_A);
 					if(!$data && !$exists_email){
 						$wc_cli = new WCK_Customer([]);
-						if(!$wc_cli->populate_from_Kapsula($cliente))
-							return NULL;
-						$cli_qnt++;
+						if(!$wc_cli->populate_from_Kapsula($cliente)){
+							$wookapsula_errors->add(  'message', 'cliente ' . $cliente->id .' : '. $cliente->email . 'Não importado' );
+						}else{
+							$cli_qnt++;
+						}
 					}
+				}
+			}else{
+				$wookapsula_errors->add(  'message', 'não foi possível receber retorno dos clientes' );
+				return NULL;
 			}
-			return $cli_qnt;
 		}
-		$wookapsula_errors->add(  'message', 'não foi possível receber retorno dos clientes' );
-		return NULL;
+		while($current_page < $last_page);
+
+		return $cli_qnt;
 	}
 
 	public function integrate_products_from_kapsula(){

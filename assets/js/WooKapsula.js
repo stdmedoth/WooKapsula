@@ -58,8 +58,11 @@ var jq = jQuery.noConflict();
 			});
 
 			jq(document).on("click", '#puxa_cli_kapsula', (e)=>{
-				var loading = new Loading();
+				var loading = new Loading({
+					discription: 			'Importando clientes (Processo demorado)...',
+				});
 
+				return ;
 				jq.ajax({
 					url: '/wp-json/kapsula/v1/integra/clientes',
 					data: {
