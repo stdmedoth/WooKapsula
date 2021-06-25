@@ -62,7 +62,6 @@ var jq = jQuery.noConflict();
 					discription: 			'Importando clientes (Processo demorado)...',
 				});
 
-				return ;
 				jq.ajax({
 					url: '/wp-json/kapsula/v1/integra/clientes',
 					data: {
