@@ -1,0 +1,3 @@
+[submodule "Kapsula"] 
+  path = Kapsula
+  url = git://github.com/stdmedoth/Kapsula-SDK-PHP
