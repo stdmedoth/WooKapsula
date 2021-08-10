@@ -83,6 +83,7 @@ class WCK_Order extends WC_Order implements WCK_Integration{
 				return NULL;
 		}
 
+		$pedido->referencia_externa = 'WC_'.$this->get_id();
 		$pedido->valor_venda = $this->get_subtotal()*100;
 		$pedido->valor = 0;
 
@@ -96,7 +97,7 @@ class WCK_Order extends WC_Order implements WCK_Integration{
 	}
 
 	public function get_enviado(){
-		return  get_post_meta($this->get_id(), '_kapsula_sended');
+		return get_post_meta($this->get_id(), '_kapsula_sended');
 	}
 
 	public function get_Kapsula_itens(){

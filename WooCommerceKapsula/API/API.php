@@ -88,6 +88,16 @@ class API{
 					// Here we register our permissions callback. The callback is fired before the main callback to check if the current user can access the endpoint.
 					'permission_callback' => [$this, 'api_permission_called'],
 			) );
+
+			register_rest_route( 'kapsula/v1', 'webhook/pedido-entregue/', array(
+					// By using this constant we ensure that when the WP_REST_Server changes our readable endpoints will work as intended.
+					'methods'  => 'POST',
+					// Here we register our callback. The callback is fired when this endpoint is matched by the WP_REST_Server class.
+					'callback' => [$this, 'webhook_pedido_entregue'],
+					// Here we register our permissions callback. The callback is fired before the main callback to check if the current user can access the endpoint.
+					'permission_callback' => [$this, 'api_permission_called'],
+			) );
+
 	}
 
 	public function wp_error_to_response(){
@@ -313,5 +323,33 @@ class API{
 		}
 		return rest_ensure_response( $this->wp_error_to_response() );
 	}
+
+	public function webhook_pedido_entregue($request){
+			$body = $request->get_body();
+
+			$json = json_decode($body);
+			if(!$json){
+				return rest_ensure_response( ['code'=>500, 'message' => 'Não foi possível interpretar json'] );
+			}
+
+			$reference_prefix = "WC_";
+			$referencia_externa = $json->dados->referencia_externa;
+			if( strpos($referencia_externa, $reference_prefix ) === false ){
+				return rest_ensure_response( ['code'=>400, 'message' => 'Referência ' .$referencia_externa. ' não segue padrão WooKapsula'] );
+			}
+
+			$id = str_replace( $reference_prefix, "", $referencia_externa );
+			$order = wc_get_order($id);
+			if(!$order){
+				return rest_ensure_response( ['code'=>400, 'message' => 'Referência ' .$referencia_externa. ' do pedido ' . $json->dados->pedido_id .' não encontrada'] );
+			}
+
+			if(!$order->update_status('completed', 'Pedido alterado pelo retorno via WebHook Kapsula', true)){
+				return rest_ensure_response( ['code'=>500, 'message' => 'Status do Pedido ' . $json->dados->pedido_id . ' (' . $referencia_externa . ') não pode ser atualizado'] );
+			}
+
+			return rest_ensure_response( ['code'=>200, 'message' => 'Pedido ' . $json->dados->pedido_id .' atualizado como concluído'] );
+	}
+
 
 }

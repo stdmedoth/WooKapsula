@@ -100,23 +100,24 @@ Class WooKapsulaPlugin{
 				&&
 				($this_status_transition_to == 'processing' || $this_status_transition_to == 'completed')){
 
+			$order = wc_get_order($this_get_id);
+			if(!$order){
+				return 1;
+			}
+
 			$helper = new Helpers();
 		  	$status = $helper->send_order_to_kapsula($this_get_id);
 		  	if(!$status){
 			  	$errors = $helper->get_errors();
-				if(count($errors)){
-					$order = new WC_Order($this_get_id);
-					foreach ($errors as $key => $error ) {
-						$order->add_order_note($error['message']);
+					if(count($errors)){
+						foreach ($errors as $key => $error ) {
+							$order->add_order_note($error['message']);
+						}
 					}
-				}
 		  	}else{
-		  		$order = new WC_Order($this_get_id);
 		  		$order->add_order_note('Enviado para Kapsula!');
 		  	}
-
 		}
-
 	}
 
 	public function wkp_registrar_arquivos(){
