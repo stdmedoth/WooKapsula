@@ -1,10 +1,10 @@
-<?php 
+<?php
 
 namespace WooKapsula;
 use WP_List_Table;
 
 Class Order_List_Table extends WP_List_Table{
-	
+
 	public function prepare_items(){
 
 		$this->process_bulk_action();
@@ -26,7 +26,7 @@ Class Order_List_Table extends WP_List_Table{
     	$this->_column_headers = array($columns, $hidden, $sortable);
     	$this->items = $data;
 
-	} 
+	}
 
 	public function get_columns(){
 		return array(
@@ -60,7 +60,7 @@ Class Order_List_Table extends WP_List_Table{
 	    //Detect when a bulk action is being triggered...
 	    if( 'delete' === $this->current_action() ) {
 	      	foreach ($_POST as $key => $value) {
-	      		
+
 	        	if($key === 'order_id'){
 	          		foreach ($value as $key2 => $value2) {
 	            		delete_post_meta($value2, '_kapsula_id');
@@ -97,9 +97,9 @@ Class Order_List_Table extends WP_List_Table{
 		global $wpdb;
 
 		$data = $wpdb->get_results("SELECT post_id, meta_value FROM ".$wpdb->prefix."postmeta WHERE meta_key = '_kapsula_id'", ARRAY_A);
-		
+
 		$orders = array_map(function($n){
-			
+
 			return [
 				'order_id' =>  $n['post_id'],
 				'pedido_id' =>  $n['meta_value']

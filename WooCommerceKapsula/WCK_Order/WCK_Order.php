@@ -25,6 +25,7 @@ class WCK_Order extends WC_Order implements WCK_Integration{
 			$pedido->cliente_id = $cliente_id_meta[0];
 		}
 
+		$pedido->referencia_externa = 'WC_'.$this->get_id();
 		if(!$pedido->cliente_id){
 			if(!$customer_id){
 				$wookapsula_errors->add(  'message', 'Cliente do pedido não possui login' );
@@ -83,7 +84,6 @@ class WCK_Order extends WC_Order implements WCK_Integration{
 				return NULL;
 		}
 
-		$pedido->referencia_externa = 'WC_'.$this->get_id();
 		$pedido->valor_venda = $this->get_subtotal()*100;
 		$pedido->valor = 0;
 

@@ -325,6 +325,7 @@ class API{
 	}
 
 	public function webhook_pedido_entregue($request){
+
 			$body = $request->get_body();
 
 			$json = json_decode($body);
@@ -332,16 +333,16 @@ class API{
 				return rest_ensure_response( ['code'=>500, 'message' => 'Não foi possível interpretar json'] );
 			}
 
-			$reference_prefix = "WC_";
-			$referencia_externa = $json->dados->referencia_externa;
-			if( strpos($referencia_externa, $reference_prefix ) === false ){
-				return rest_ensure_response( ['code'=>400, 'message' => 'Referência ' .$referencia_externa. ' não segue padrão WooKapsula'] );
+			global $wpdb;
+			$id_kapsula = $json->dados->pedido_id;
+			$data = $wpdb->get_results("SELECT post_id FROM ".$wpdb->prefix."postmeta WHERE meta_key = '_kapsula_id' and meta_value = '" . $id_kapsula . "'", ARRAY_A);
+			if(!$data || !count($data)){
+				return rest_ensure_response( ['code'=>400, 'message' => 'Pedido ' . $json->dados->pedido_id . ' não vinculado na WooKapsula'] );
 			}
 
-			$id = str_replace( $reference_prefix, "", $referencia_externa );
-			$order = wc_get_order($id);
+			$order = wc_get_order($data[0]['post_id']);
 			if(!$order){
-				return rest_ensure_response( ['code'=>400, 'message' => 'Referência ' .$referencia_externa. ' do pedido ' . $json->dados->pedido_id .' não encontrada'] );
+				return rest_ensure_response( ['code'=>400, 'message' => 'Pedido ' . $json->dados->pedido_id .' não existe mais no WooCommerce'] );
 			}
 
 			if(!$order->update_status('completed', 'Pedido alterado pelo retorno via WebHook Kapsula', true)){
