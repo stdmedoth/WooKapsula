@@ -51,7 +51,7 @@ Class Helpers {
 			if($response){
 				$current_page = $response->current_page;
 				$last_page = $response->last_page;
-				
+
 				foreach ($response->data as $cliente) {
 					$data = $wpdb->get_results("SELECT * FROM " . $wpdb->prefix."usermeta WHERE meta_key = 'id_kapsula' and meta_value = " . $cliente->id, ARRAY_A);
 					$exists_email = $wpdb->get_results("SELECT * FROM " . $wpdb->prefix."users WHERE user_email like '" . $cliente->email . "'", ARRAY_A);

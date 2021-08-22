@@ -26,6 +26,13 @@ class WCK_Customer extends WC_Customer implements WCK_Integration{
 
 	public function Wc_to_Kapsula(){
 
+		global $wookapsula_errors;
+
+		if(!isset($this->get_id())){
+			$wookapsula_errors->add(  'message', 'Não foi possível criar Cliente Kapsula, pois cadastro é de convidado' );
+			return NULL;
+		}
+
 		$cliente = new Cliente();
 
 		$cliente->cpf = $this->get_meta('billing_cpf');
@@ -33,8 +40,6 @@ class WCK_Customer extends WC_Customer implements WCK_Integration{
 		$cliente->sexo = $this->get_meta('billing_sex');
 
 		$cliente->nome = $this->get_first_name() . ' ' . $this->get_last_name();
-		$cliente->email = $this->get_email();
-		$cliente->email = $this->get_email();
 		$cliente->email = $this->get_email();
 
 		$cliente->endereco = $this->get_billing_address_1();

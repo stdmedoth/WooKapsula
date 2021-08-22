@@ -26,14 +26,15 @@ class WCK_Order extends WC_Order implements WCK_Integration{
 		}
 
 		$pedido->referencia_externa = 'WC_'.$this->get_id();
+
 		if(!$pedido->cliente_id){
 			if(!$customer_id){
-				$wookapsula_errors->add(  'message', 'Cliente do pedido não possui login' );
+				$wookapsula_errors->add(  'message', 'Cliente do pedido ' . $this->get_id() . ' não possui login' );
 				$logger->add_log('Cliente do pedido não possui login');
 				return NULL;
 			}
 
-			$woocliente = new WCK_Customer($customer_id);
+			$woocliente = new WCK_Customer( $customer_id );
 			$ClienteKapsula = $woocliente->Wc_to_Kapsula();
 
 			$return = $ClienteKapsula->post();
@@ -58,15 +59,14 @@ class WCK_Order extends WC_Order implements WCK_Integration{
 				return NULL;
 			}
 		}
+
 		$itens = $this->get_Kapsula_itens();
 		if(!$itens)
 			return NULL;
 
 		$pedido->itens = $itens;
-		//var_dump($pedido);
-		//die();
+
 		$method_id = @array_shift($this->get_items( 'shipping' ))['method_id'];
-		$method_id = 'correios-sedex';
 		switch ($method_id) {
 			case 'correios-pac':
 				$pedido->tipo_frete = 0;
