@@ -48,6 +48,11 @@ Class WooKapsulaPlugin{
 		add_action('admin_menu',[$this, 'load_menus']);
 		$this->wkp_load_plugin_actions();
 		$this->wkp_load_plugin_filters ();
+
+		//$cliente = new WCK_Customer(1);
+		//$numb = get_user_meta( $cliente->get_id(), 'billing_number', true );
+		//var_dump($numb);
+		//die();
 	}
 
 	public function wkp_load_plugin_actions(){
