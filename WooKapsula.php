@@ -4,7 +4,7 @@
 	Description: Integração KapSula com WooCommerce
 	Author: Incipe Desenvolvimento (João Calisto)
 	Author URI: http://incipe.com.br/
-	Version: 1.0
+	Version: 1.1
 */
 
 require('functions.php');
