@@ -44,8 +44,8 @@ class WCK_Customer extends WC_Customer implements WCK_Integration{
 
 		$cliente->endereco = $this->get_billing_address_1();
 		$cliente->telefone = $this->get_billing_phone();
-		$cliente->numero = $this->get_billing_phone();
-		$cliente->bairro = $this->get_billing_phone();
+		$cliente->numero = $this->get_billing_number();
+		$cliente->bairro = $this->get_billing_neighborhood();
 		$cliente->cidade = $this->get_billing_city();
 		$cliente->estado = $this->get_billing_state();
 		$cliente->pais = $this->get_billing_country();
