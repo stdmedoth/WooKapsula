@@ -78,10 +78,12 @@ class WCK_Order extends WC_Order implements WCK_Integration{
 				$pedido->tipo_frete = 0;
 				break;
 			default:
-				$logger->add_log(['Tipo de frete não existente para Kapsula', $method_id]);
-				$wookapsula_errors->add(  'message', 'Tipo de frete não existenten para Kapsula' );
+				//$logger->add_log(['Tipo de frete não existente para Kapsula', $method_id]);
+				//$wookapsula_errors->add(  'message', 'Tipo de frete não existentente para Kapsula' );
+				//$pedido->tipo_frete = 0;
+				//return NULL;
 				$pedido->tipo_frete = 0;
-				return NULL;
+				break;
 		}
 
 		$pedido->valor_venda = $this->get_subtotal()*100;

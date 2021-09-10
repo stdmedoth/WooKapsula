@@ -130,43 +130,47 @@ Class Helpers {
 			}
 			return 0;
 		}
+		if(!$response->pedidos){
+			$wookapsula_errors->add(  'message', 'Não foi possível receber pedidos' );
+			return rest_ensure_response( $this->wp_error_to_response() );
+		}
 
-		$pedido = new Pedido();
+		$pedidos = $response->pedidos;
+		if(is_array($pedidos)){
+			foreach ($pedidos as $id) {
+				if(get_option('wookapsula_envia_faturado')!=0){
+					try{
+						$pedido_status = new Pedido();
+						$pedido_status->id = $id;
+						$response = $pedido_status->put([
+				 			"status" => 3
+						]);
+						if(!$response){
+							$wookapsula_errors->add(  'message', 'Não foi possível mudar status do pedido' );
+							return rest_ensure_response( $this->wp_error_to_response() );
+						}
+						if($response->code != 200){
+							if(isset($response->erros)){
+								foreach ($response->erros as $key => $value) {
+									foreach ($value as $key2 => $erro) {
+										$wookapsula_errors->add(  'message',  $key . ' : ' . $erro );
+									}
+								}
+							}else{
+								$wookapsula_errors->add(  'message', $response->message );
+							}
+							return rest_ensure_response( $this->wp_error_to_response() );
 
-		if(is_array($pedido->id)){
-			foreach ($pedido->id as $id) {
+						}
+
+					}catch(Exception $e){
+						return rest_ensure_response( $e->getMessage() );
+					}
+				}
 				$order->set_enviado(1, $id);
 			}
 		}else{
-			$order->set_enviado(1, $pedido->id);
-		}
-		$order->set_enviado(1, $pedido->id);
-
-		if(get_option('wookapsula_envia_faturado')!=0){
-			$status = 3;
-			try{
-				$response = $pedido->put([
-		 			"status" => intval($status)
-				]);
-				if(!$response){
-					$wookapsula_errors->add(  'message', 'Não foi possível mudar status do pedido' );
-					return 0;
-				}
-				if($response->code != 200){
-					if(isset($response->erros)){
-						foreach ($response->erros as $key => $value) {
-							foreach ($value as $key2 => $erro) {
-								$wookapsula_errors->add(  'message',  $key . ' : ' . $erro );
-							}
-						}
-					}else{
-						$wookapsula_errors->add(  'message', $response->message );
-					}
-				}
-
-			}catch(Exception $e){
-				$wookapsula_errors->add(  'message', $e->getMessage() );
-			}
+			$order->set_enviado(1, $pedidos);
 		}
 
 		return 1;
