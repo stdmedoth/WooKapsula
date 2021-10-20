@@ -40,16 +40,59 @@ class CustomField{
 	    if ( isset($_POST['id_kapsula']) ) {
 	        $product->update_meta_data( 'id_kapsula', sanitize_text_field( $_POST['id_kapsula'] ) );
 	    }
+
 	}
 
 
 	public function customer_meta_fields( $fields ) {
 
 		// Billing fields.
-		$new_fields['billing']['title'] = 'Id Kapsula';
+		$new_fields['billing']['title'] = 'Dados Kapsula';
 		$new_fields['billing']['fields']['id_kapsula'] = array(
 				'label'       => 'Id Kapsula',
 				'description' => 'Id do cliente na plataforma Kapsula');
+		$new_fields['billing']['fields']['id_kapsula'] = array(
+				'label'       => 'Id Kapsula',
+				'description' => 'Id do cliente na plataforma Kapsula');
+		$new_fields['billing']['fields']['billing_first_name'] = array(
+			'label' => 'Primeiro Nome',
+			'description' => 'Insira o primeiro nome');
+		$new_fields['billing']['fields']['billing_last_name'] = array(
+			'label' => 'Sobrenome',
+			'description' => 'Insira o sobrenome');
+		$new_fields['billing']['fields']['billing_cpf'] = array(
+			'label' => 'CPF',
+			'description' => 'Insira o CPF');
+		$new_fields['billing']['fields']['billing_rg'] = array(
+			'label' => 'RG',
+			'description' => 'Insira o RG');
+		$new_fields['billing']['fields']['billing_sex'] = array(
+			'label' => 'Sexo',
+			'description' => 'Insira o Sexo (M/F)');
+		$new_fields['billing']['fields']['billing_birthdate'] = array(
+			'label' => 'Data Nascimento',
+			'description' => 'Insira a data (DD/MM/YYYY)');
+		$new_fields['billing']['fields']['billing_address_1'] = array(
+			'label' => 'Endereço de venda',
+			'description' => 'Insira o logradouro');
+		$new_fields['billing']['fields']['billing_city'] = array(
+			'label' => 'Cidade de Venda',
+			'description' => 'Insira a cidade');
+		$new_fields['billing']['fields']['billing_state'] = array(
+			'label' => 'Estado',
+			'description' => 'Insira a UF (XX)');
+		$new_fields['billing']['fields']['billing_postcode'] = array(
+			'label' => 'CEP',
+			'description' => 'Insira o CEP (XXXXXXXX)');
+		$new_fields['billing']['fields']['billing_country'] = array(
+			'label' => 'Pais',
+			'description' => 'Insira o Pais' );
+		$new_fields['billing']['fields']['billing_email'] = array(
+			'label' => 'Email',
+			'description' => 'Insira o Email de venda');
+		$new_fields['billing']['fields']['billing_phone'] = array(
+			'label' => 'Telefone',
+			'description' => 'Insira o Telefone');
 
 		$new_fields = apply_filters( 'wcbcf_customer_meta_fields', $new_fields );
 
