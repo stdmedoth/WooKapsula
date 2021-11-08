@@ -2,9 +2,8 @@
 /*
 	Plugin Name: WooKapsula
 	Description: Integração KapSula com WooCommerce
-	Author: Incipe Desenvolvimento (João Calisto)
-	Author URI: http://incipe.com.br/
-	Version: 1.1
+	Author: stdmedoth (João Calisto)
+	Version: 1.2
 */
 
 require('functions.php');
