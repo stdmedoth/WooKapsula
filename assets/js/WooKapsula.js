@@ -12,7 +12,7 @@ var jq = jQuery.noConflict();
 			jq(document).on("click", '#button_update_kapsula_pedido_status', (e)=>{
 				var loading = new Loading();
 				jq.ajax({
-						url: '/wp-json/kapsula/v1/update_pedido_status',
+						url: wkjs_custom.wpurl+'/wp-json/kapsula/v1/update_pedido_status',
 						data: {
 							id: jq('#button_update_kapsula_pedido_status').data('order'),
 							status: jq('#select_kapsula_pedido_status option:selected').val()
@@ -37,7 +37,7 @@ var jq = jQuery.noConflict();
 				var loading = new Loading();
 
 				jq.ajax({
-					url: '/wp-json/kapsula/v1/integra/produtos',
+					url: wkjs_custom.wpurl+'/wp-json/kapsula/v1/integra/produtos',
 					data: {
 
 					},
@@ -63,7 +63,7 @@ var jq = jQuery.noConflict();
 				});
 
 				jq.ajax({
-					url: '/wp-json/kapsula/v1/integra/clientes',
+					url: wkjs_custom.wpurl+'/wp-json/kapsula/v1/integra/clientes',
 					data: {
 
 					},
@@ -87,7 +87,7 @@ var jq = jQuery.noConflict();
 				var loading = new Loading();
 
 				jq.ajax({
-					url: '/wp-json/kapsula/v1/integra/limpar',
+					url: wkjs_custom.wpurl+'/wp-json/kapsula/v1/integra/limpar',
 					data: {
 
 					},
@@ -111,7 +111,7 @@ var jq = jQuery.noConflict();
 				var loading = new Loading();
 
 				jq.ajax({
-					url: '/wp-json/kapsula/v1/send/pedido',
+					url: wkjs_custom.wpurl+'/wp-json/kapsula/v1/send/pedido',
 					data: {
 						id: jq('#button_send_to_kapsula').data('order')
 					},

@@ -43,6 +43,7 @@ class WCK_Customer extends WC_Customer implements WCK_Integration{
 		$cliente->email = $this->get_email();
 
 		$cliente->endereco = $this->get_billing_address_1();
+		$cliente->complemento = $this->get_billing_address_2();
 		$cliente->telefone = $this->get_billing_phone();
 		$cliente->numero = $this->get_meta( 'billing_number' );
 		$cliente->bairro = $this->get_meta( 'billing_neighborhood' );
@@ -70,6 +71,7 @@ class WCK_Customer extends WC_Customer implements WCK_Integration{
 			}
 			$this->set_email($cliente->email);
 			$this->set_billing_address_1($cliente->endereco);
+			$this->set_billing_address_2($cliente->complemento);
 			$this->set_billing_phone($cliente->telefone);
 			$this->set_billing_phone($cliente->numero);
 

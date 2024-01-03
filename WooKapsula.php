@@ -134,6 +134,9 @@ Class WooKapsulaPlugin{
 		wp_enqueue_script( 'notify-js', plugins_url('assets/js/notify.min.js', __FILE__), array( 'jquery' ) );
 
 		wp_enqueue_script( 'WooKapsulaJs', plugins_url('assets/js/WooKapsula.js', __FILE__), array( 'jquery' ) );
+
+		$wkjs_custom = array( 'wpurl' => get_bloginfo('wpurl') );
+    	wp_localize_script( 'WooKapsulaJs', 'wkjs_custom', $wkjs_custom );
 	}
 
 }

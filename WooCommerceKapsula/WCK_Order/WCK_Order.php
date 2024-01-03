@@ -8,6 +8,8 @@ use WC_Order;
 
 class WCK_Order extends WC_Order implements WCK_Integration{
 
+	protected $customer_id;
+
 	public function __construct($arg){
 		parent::__construct($arg);
 	}
@@ -66,7 +68,8 @@ class WCK_Order extends WC_Order implements WCK_Integration{
 
 		$pedido->itens = $itens;
 
-		$method_id = @array_shift($this->get_items( 'shipping' ))['method_id'];
+		$items = $this->get_items( 'shipping' );
+		$method_id = @array_shift($items)['method_id'];
 		switch ($method_id) {
 			case 'correios-pac':
 				$pedido->tipo_frete = 0;
